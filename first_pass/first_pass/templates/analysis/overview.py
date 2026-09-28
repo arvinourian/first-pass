@@ -81,3 +81,13 @@ class OutlierFlags(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         return "import numpy as np\nnum_cols = df.select_dtypes(include=[np.number]).columns\nQ1 = df[num_cols].quantile(0.25)\nQ3 = df[num_cols].quantile(0.75)\nIQR = Q3 - Q1\noutliers = ((df[num_cols] < (Q1 - 1.5 * IQR)) | (df[num_cols] > (Q3 + 1.5 * IQR))).sum()\ndisplay(outliers[outliers > 0])"
+
+class CustomCode(AnalysisTemplate):
+    id = "custom_code"
+    @classmethod
+    def get_params_schema(cls) -> Any: return {"code_snippet": "str (must be a valid Python code string to execute, e.g. for feature engineering or custom plots. assume pandas as pd, seaborn as sns, matplotlib.pyplot as plt, and dataset as df are already loaded)"}
+    @classmethod
+    def check_preconditions(cls, columns: List[str], params: dict, profile: DataProfile) -> Optional[str]: return None
+    @classmethod
+    def generate_code(cls, columns: List[str], params: dict) -> str:
+        return params.get("code_snippet", "# No code provided")

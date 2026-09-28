@@ -70,3 +70,23 @@ class Hexbin(AnalysisTemplate):
         x = params.get('x', columns[0] if len(columns) > 0 else 'None')
         y = params.get('y', columns[1] if len(columns) > 1 else 'None')
         return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(8, 6))\ndf.plot.hexbin(x='{x}', y='{y}', gridsize={params.get('gridsize', 30)}, cmap='viridis', sharex=False)\nplt.show()"
+
+class OlsRegression(AnalysisTemplate):
+    id = "ols_regression"
+    @classmethod
+    def get_params_schema(cls) -> Any: return {"target": str, "predictors": list}
+    @classmethod
+    def check_preconditions(cls, columns: List[str], params: dict, profile: DataProfile) -> Optional[str]: return None
+    @classmethod
+    def generate_code(cls, columns: List[str], params: dict) -> str:
+        target = params.get('target', columns[0] if columns else 'None')
+        preds = params.get('predictors', columns[1:] if len(columns)>1 else [])
+        return (
+            f"import statsmodels.api as sm\n"
+            f"temp_df = df[[{repr(target)}] + {preds}].dropna()\n"
+            f"X = temp_df[{preds}]\n"
+            f"Y = temp_df[{repr(target)}]\n"
+            f"X = sm.add_constant(X)\n"
+            f"model = sm.OLS(Y, X).fit()\n"
+            f"display(model.summary())"
+        )

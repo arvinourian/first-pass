@@ -66,3 +66,42 @@ class Ecdf(AnalysisTemplate):
     def generate_code(cls, columns: List[str], params: dict) -> str:
         col = params.get('column', columns[0] if columns else None)
         return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.ecdfplot(data=df, x='{col}', color='teal', linewidth=2)\nplt.show()"
+
+class MultiHist(AnalysisTemplate):
+    id = "multi_hist"
+    @classmethod
+    def get_params_schema(cls) -> Any: return {"columns": list}
+    @classmethod
+    def check_preconditions(cls, columns: List[str], params: dict, profile: DataProfile) -> Optional[str]: return None
+    @classmethod
+    def generate_code(cls, columns: List[str], params: dict) -> str:
+        cols = params.get('columns', columns)
+        return (
+            f"import seaborn as sns; import matplotlib.pyplot as plt; import math\n"
+            f"cols = {cols}[:12] # Limit to 12\n"
+            f"rows = math.ceil(len(cols) / 3)\n"
+            f"fig, axes = plt.subplots(rows, min(3, len(cols)), figsize=(15, 4 * rows))\n"
+            f"axes = axes.flatten() if len(cols) > 1 else [axes]\n"
+            f"for ax, col in zip(axes, cols):\n"
+            f"    sns.histplot(data=df, x=col, kde=True, color='teal', ax=ax)\n"
+            f"    ax.set_title(col)\n"
+            f"plt.tight_layout(); plt.show()"
+        )
+
+class RoundingAnomalies(AnalysisTemplate):
+    id = "rounding_anomalies"
+    @classmethod
+    def get_params_schema(cls) -> Any: return {"column": str, "modulo": int}
+    @classmethod
+    def check_preconditions(cls, columns: List[str], params: dict, profile: DataProfile) -> Optional[str]: return None
+    @classmethod
+    def generate_code(cls, columns: List[str], params: dict) -> str:
+        col = params.get('column', columns[0] if columns else None)
+        mod = params.get('modulo', 1000)
+        return (
+            f"import pandas as pd\n"
+            f"s = df['{col}'].dropna()\n"
+            f"exact_pct = (s % {mod} == 0).mean() * 100\n"
+            f"print(f\"Share of {{'{col}'}} falling exactly on a multiple of {{{mod}}}: {{exact_pct:.1f}}%\")\n"
+            f"print(f\"Skewness of {{'{col}'}}: {{s.skew():.2f}}\")"
+        )

@@ -5,6 +5,6 @@ applies_when:
   - has_type: numeric
     min_count: 2
 tags: [numeric, correlation, scatter]
-templates: [corr_heatmap, corr_ranked_bar, scatter, scatter_regression, hexbin]
+templates: [corr_heatmap, corr_ranked_bar, scatter, scatter_regression, hexbin, ols_regression]
 ---
 Find correlations and plot relationships between pairs of numeric columns.
