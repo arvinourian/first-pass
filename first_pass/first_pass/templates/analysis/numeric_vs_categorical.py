@@ -71,3 +71,26 @@ class GroupSummaryTable(AnalysisTemplate):
     def generate_code(cls, columns: List[str], params: dict) -> str:
         num, cat = _get_num_cat(columns, params)
         return f"display(df.groupby('{cat}')['{num}'].agg(['count', 'mean', 'median', 'std']))"
+
+class GroupDiffTest(AnalysisTemplate):
+    id = "group_diff_test"
+    @classmethod
+    def get_params_schema(cls) -> Any: return {"numeric": str, "category": str}
+    @classmethod
+    def check_preconditions(cls, columns: List[str], params: dict, profile: DataProfile) -> Optional[str]: return None
+    @classmethod
+    def generate_code(cls, columns: List[str], params: dict) -> str:
+        num = params.get('numeric', columns[0] if columns else None)
+        cat = params.get('category', columns[1] if len(columns) > 1 else None)
+        return (
+            f"import scipy.stats as stats\n"
+            f"import pandas as pd\n"
+            f"groups = [group[{repr(num)}].dropna() for name, group in df.groupby({repr(cat)}) if len(group) >= 5]\n"
+            f"if len(groups) >= 2:\n"
+            f"    # Simple ANOVA (assuming normality for demonstration)\n"
+            f"    f_stat, p_val = stats.f_oneway(*groups)\n"
+            f"    print(f'ANOVA F-statistic: {{f_stat:.4f}}')\n"
+            f"    print(f'p-value: {{p_val:.4g}}')\n"
+            f"else:\n"
+            f"    print('Not enough groups with >= 5 rows')\n"
+        )

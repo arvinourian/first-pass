@@ -118,3 +118,51 @@ class StackedAreaTime(AnalysisTemplate):
         d, v = _get_ts(columns, params)
         c = params.get('category', columns[2] if len(columns)>2 else 'None')
         return f"import matplotlib.pyplot as plt; import pandas as pd\npivot = pd.pivot_table(df, values='{v}', index='{d}', columns='{c}', aggfunc='sum')\nplt.figure(figsize=(12, 6))\npivot.plot.area(ax=plt.gca(), colormap='Set2')\nplt.show()"
+
+class StlDecompose(AnalysisTemplate):
+    id = "stl_decompose"
+    @classmethod
+    def get_params_schema(cls) -> Any: return {"date": str, "value": str, "period": int}
+    @classmethod
+    def check_preconditions(cls, columns: List[str], params: dict, profile: DataProfile) -> Optional[str]: return None
+    @classmethod
+    def generate_code(cls, columns: List[str], params: dict) -> str:
+        date = params.get('date', columns[0] if columns else None)
+        val = params.get('value', columns[1] if len(columns) > 1 else None)
+        period = params.get('period', 7)
+        return (
+            f"import matplotlib.pyplot as plt\n"
+            f"import pandas as pd\n"
+            f"from statsmodels.tsa.seasonal import seasonal_decompose\n"
+            f"ts = df.set_index({repr(date)})[{repr(val)}].dropna().sort_index()\n"
+            f"if len(ts) >= {period} * 2:\n"
+            f"    result = seasonal_decompose(ts, model='additive', period={period})\n"
+            f"    result.plot()\n"
+            f"    plt.show()\n"
+            f"else:\n"
+            f"    print('Not enough data for seasonal decomposition')\n"
+        )
+
+class AcfPlot(AnalysisTemplate):
+    id = "acf_plot"
+    @classmethod
+    def get_params_schema(cls) -> Any: return {"date": str, "value": str, "lags": int}
+    @classmethod
+    def check_preconditions(cls, columns: List[str], params: dict, profile: DataProfile) -> Optional[str]: return None
+    @classmethod
+    def generate_code(cls, columns: List[str], params: dict) -> str:
+        date = params.get('date', columns[0] if columns else None)
+        val = params.get('value', columns[1] if len(columns) > 1 else None)
+        lags = params.get('lags', 30)
+        return (
+            f"import matplotlib.pyplot as plt\n"
+            f"from statsmodels.graphics.tsaplots import plot_acf\n"
+            f"ts = df.set_index({repr(date)})[{repr(val)}].dropna().sort_index()\n"
+            f"if len(ts) > 0:\n"
+            f"    fig, ax = plt.subplots(figsize=(10, 4))\n"
+            f"    plot_acf(ts, lags=min({lags}, len(ts)-1), ax=ax)\n"
+            f"    plt.title(f'Autocorrelation: {{{val}}}')\n"
+            f"    plt.show()\n"
+            f"else:\n"
+            f"    print('No data available for ACF plot')\n"
+        )

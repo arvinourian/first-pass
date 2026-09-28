@@ -105,3 +105,21 @@ class RoundingAnomalies(AnalysisTemplate):
             f"print(f\"Share of {{'{col}'}} falling exactly on a multiple of {{{mod}}}: {{exact_pct:.1f}}%\")\n"
             f"print(f\"Skewness of {{'{col}'}}: {{s.skew():.2f}}\")"
         )
+
+class QqPlot(AnalysisTemplate):
+    id = "qq_plot"
+    @classmethod
+    def get_params_schema(cls) -> Any: return {"column": str}
+    @classmethod
+    def check_preconditions(cls, columns: List[str], params: dict, profile: DataProfile) -> Optional[str]: return None
+    @classmethod
+    def generate_code(cls, columns: List[str], params: dict) -> str:
+        col = params.get('column', columns[0] if columns else None)
+        return (
+            f"import matplotlib.pyplot as plt\n"
+            f"import scipy.stats as stats\n"
+            f"plt.figure(figsize=(8, 6))\n"
+            f"stats.probplot(df['{col}'].dropna(), dist='norm', plot=plt)\n"
+            f"plt.title(f'Q-Q Plot: {{{col}}}')\n"
+            f"plt.show()"
+        )
