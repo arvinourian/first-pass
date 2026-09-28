@@ -180,8 +180,7 @@ if uploaded_file is not None:
                     with open(st.session_state['html_path'], "rb") as f:
                         st.download_button("HTML", f, file_name=os.path.basename(st.session_state['html_path']), mime='text/html')
                 if 'md_path' in st.session_state and os.path.exists(st.session_state['md_path']):
-                    with open(st.session_state['md_path'], "rb") as f:
-                        st.download_button("Markdown (MD)", f, file_name=os.path.basename(st.session_state['md_path']))
+                    pass
                 if 'docx_path' in st.session_state and os.path.exists(st.session_state['docx_path']):
                     with open(st.session_state['docx_path'], "rb") as f:
                         st.download_button("DOCX", f, file_name=os.path.basename(st.session_state['docx_path']))
