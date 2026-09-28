@@ -31,7 +31,11 @@ with st.container():
     )
     
     st.markdown("<br>", unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("Upload Spreadsheet", type=['csv', 'xlsx', 'xls', 'parquet'])
+    col1, col2 = st.columns(2)
+    with col1:
+        uploaded_file = st.file_uploader("Upload Spreadsheet", type=['csv', 'xlsx', 'xls', 'parquet'])
+    with col2:
+        context_file = st.file_uploader("Upload Context (Optional .txt, .md, .docx)", type=['txt', 'md', 'docx'])
 
 if uploaded_file is not None:
     os.makedirs("temp", exist_ok=True)
@@ -47,6 +51,22 @@ if uploaded_file is not None:
         if not os.environ.get("GEMINI_API_KEY"):
             st.error("Please add your GEMINI_API_KEY to the .env file in the project directory.")
             st.stop()
+            
+        context_text = ""
+        if context_file is not None:
+            try:
+                if context_file.name.endswith(('.txt', '.md')):
+                    context_text = context_file.read().decode('utf-8', errors='replace')
+                elif context_file.name.endswith('.docx'):
+                    import docx
+                    doc = docx.Document(context_file)
+                    context_text = "\n".join([p.text for p in doc.paragraphs])
+            except Exception as e:
+                st.warning(f"Failed to read context file: {e}")
+
+        combined_instructions = st.session_state.user_text
+        if context_text:
+            combined_instructions += f"\n\n--- Context Document ({context_file.name}) ---\n{context_text}"
             
         from datetime import datetime
         run_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -74,24 +94,24 @@ if uploaded_file is not None:
             
             my_bar.progress(30, text="Stage 3: RAG Pass 1 (Cleaning Plan)...")
             
-            query_c = f"cleaning operations missing values duplicates dates {raw_profile.row_count} rows. " + st.session_state.user_text
+            query_c = f"cleaning operations missing values duplicates dates {raw_profile.row_count} rows. " + combined_instructions
             cleaning_pbs = idx.hybrid_search(query_c, "cleaning")
             if not cleaning_pbs and idx.playbooks:
                 cleaning_pbs = [pb for pb in idx.playbooks if pb.category == 'cleaning'][:4]
                 
-            cleaning_plan = plan_cleaning(raw_profile, cleaning_pbs, st.session_state.user_text)
+            cleaning_plan = plan_cleaning(raw_profile, cleaning_pbs, combined_instructions)
             
             my_bar.progress(50, text="Stage 4: Executing Cleaning (No LLM)...")
             cleaned_profile = raw_profile 
             
             my_bar.progress(70, text="Stage 5: RAG Pass 2 (Analysis Plan)...")
             
-            query_a = f"analysis distribution categories correlations trends. " + st.session_state.user_text
+            query_a = f"analysis distribution categories correlations trends. " + combined_instructions
             analysis_pbs = idx.hybrid_search(query_a, "analysis", top_k=6)
             if not analysis_pbs and idx.playbooks:
                 analysis_pbs = [pb for pb in idx.playbooks if pb.category == 'analysis'][:6]
                 
-            analysis_plan = plan_analysis(cleaned_profile, analysis_pbs, st.session_state.user_text)
+            analysis_plan = plan_analysis(cleaned_profile, analysis_pbs, combined_instructions)
             
             # Prepend static overview analyses
             from first_pass.schemas import AnalysisItem
@@ -107,7 +127,7 @@ if uploaded_file is not None:
             my_bar.progress(85, text="Stage 6: Generating Notebook...")
             
             nb_path = os.path.join("temp", f"{os.path.splitext(uploaded_file.name)[0]}_FirstPass.ipynb")
-            builder = NotebookBuilder(filename=temp_path, user_text=st.session_state.user_text)
+            builder = NotebookBuilder(filename=temp_path, user_text=combined_instructions)
             builder.build_notebook(
                 raw_profile=raw_profile,
                 cleaning_plan=cleaning_plan,
