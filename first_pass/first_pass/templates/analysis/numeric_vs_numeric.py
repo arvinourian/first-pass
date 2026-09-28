@@ -41,7 +41,7 @@ class Scatter(AnalysisTemplate):
         x = params.get('x', columns[0] if len(columns) > 0 else 'None')
         y = params.get('y', columns[1] if len(columns) > 1 else 'None')
         hue_arg = f", hue='{params['hue']}'" if params.get('hue') else ""
-        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(8, 6))\nsns.scatterplot(data=df, x='{x}', y='{y}'{hue_arg}, alpha=0.6)\nplt.show()"
+        return f"import seaborn as sns; import matplotlib.pyplot as plt\nn_pts = len(df)\na_val = max(0.1, min(0.8, 100 / max(n_pts, 1)))\ns_val = max(10, min(80, 5000 / max(n_pts, 1)))\nplt.figure(figsize=(8, 6))\nsns.scatterplot(data=df, x='{x}', y='{y}'{hue_arg}, alpha=a_val, s=s_val)\nplt.show()"
 
 class ScatterRegression(AnalysisTemplate):
     id = "scatter_regression"
@@ -55,7 +55,7 @@ class ScatterRegression(AnalysisTemplate):
     def generate_code(cls, columns: List[str], params: dict) -> str:
         x = params.get('x', columns[0] if len(columns) > 0 else 'None')
         y = params.get('y', columns[1] if len(columns) > 1 else 'None')
-        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(8, 6))\nsns.regplot(data=df, x='{x}', y='{y}', scatter_kws={{'alpha':0.5}}, line_kws={{'color':'red'}})\nplt.show()"
+        return f"import seaborn as sns; import matplotlib.pyplot as plt\nn_pts = len(df)\na_val = max(0.05, min(0.8, 100 / max(n_pts, 1)))\ns_val = max(5, min(50, 5000 / max(n_pts, 1)))\nplt.figure(figsize=(8, 6))\nsns.regplot(data=df, x='{x}', y='{y}', scatter_kws={{'alpha': a_val, 's': s_val}}, line_kws={{'color':'red'}})\nplt.show()"
 
 class Hexbin(AnalysisTemplate):
     id = "hexbin"

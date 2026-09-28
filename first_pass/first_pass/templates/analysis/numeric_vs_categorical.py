@@ -57,7 +57,7 @@ class StripSwarm(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         num, cat = _get_num_cat(columns, params)
-        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.stripplot(data=df, x='{cat}', y='{num}', hue='{cat}', palette='Set2', legend=False, alpha=0.6, jitter=True); plt.xticks(rotation=45); plt.show()"
+        return f"import seaborn as sns; import matplotlib.pyplot as plt\nn_pts = len(df)\na_val = max(0.1, min(0.8, 100 / max(n_pts, 1)))\ns_val = max(2, min(10, 5000 / max(n_pts, 1)))\nplt.figure(figsize=(10, 6))\nsns.stripplot(data=df, x='{cat}', y='{num}', hue='{cat}', palette='Set2', legend=False, alpha=a_val, size=s_val, jitter=True); plt.xticks(rotation=45); plt.show()"
 
 class GroupSummaryTable(AnalysisTemplate):
     id = "group_summary_table"
