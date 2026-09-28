@@ -12,22 +12,26 @@ from first_pass.llm.client import llm_usage_logs
 from first_pass.notebook_builder import NotebookBuilder
 from first_pass.export import export_notebook
 
-st.set_page_config(page_title="First Pass", layout="wide")
+st.set_page_config(page_title="First Pass", page_icon="🚀", layout="wide")
 
 import dotenv
 dotenv.load_dotenv()
 
-st.title("First Pass")
-st.markdown("An automated AI data scientist that provides a quick \"First Pass\" of your data to guide you in the right direction for further analysis. Upload a dataset to instantly generate an executed Jupyter Notebook, cleaned datasets, and multi-format reports.")
-        
-st.text_input(
-    "User Instructions", 
-    key="user_text", 
-    placeholder="Optional Instructions (e.g., 'this is monthly sales data, I care about regional performance')",
-    label_visibility="collapsed"
-)
+# App Header
+st.markdown("<h1 style='text-align: center; font-size: 3.5rem; margin-bottom: 0;'>🚀 First Pass</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 1.2rem; color: #555; margin-bottom: 2rem;'>An automated AI data scientist that provides a quick <b>First Pass</b> of your data to guide you in the right direction for further analysis. Upload a dataset to instantly generate an executed Jupyter Notebook, cleaned datasets, and multi-format reports.</p>", unsafe_allow_html=True)
 
-uploaded_file = st.file_uploader("Upload Spreadsheet", type=['csv', 'xlsx', 'xls', 'parquet'])
+# Main Container
+with st.container():
+    st.text_input(
+        "User Instructions", 
+        key="user_text", 
+        placeholder="Optional Instructions (e.g., 'this is monthly sales data, I care about regional performance')",
+        label_visibility="collapsed"
+    )
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    uploaded_file = st.file_uploader("Upload Spreadsheet", type=['csv', 'xlsx', 'xls', 'parquet'])
 
 if uploaded_file is not None:
     os.makedirs("temp", exist_ok=True)
@@ -35,9 +39,11 @@ if uploaded_file is not None:
     with open(temp_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
         
-    st.write(f"**Uploaded:** {uploaded_file.name}")
-    
-    if st.button("Run First Pass"):
+    col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
+    with col_btn2:
+        run_btn = st.button("✨ Run First Pass", type="primary", use_container_width=True)
+
+    if run_btn:
         if not os.environ.get("GEMINI_API_KEY"):
             st.error("Please add your GEMINI_API_KEY to the .env file in the project directory.")
             st.stop()
@@ -155,62 +161,60 @@ if uploaded_file is not None:
             st.text(traceback.format_exc())
 
     if st.session_state.get('run_complete'):
-        st.progress(100, text="Done!")
-        st.success(f"First Pass completed successfully for {st.session_state.get('last_file', 'your file')}!")
-        st.markdown(f"### Downloads: {st.session_state.get('last_file', '')}")
+        st.success(f"🎉 First Pass completed successfully for **{st.session_state.get('last_file', 'your file')}**!")
+        
+        st.markdown(f"<h3 style='margin-top: 2rem;'>Downloads: {st.session_state.get('last_file', '')}</h3>", unsafe_allow_html=True)
         col1, col2, col3 = st.columns(3)
         
         with col1:
             with st.container(border=True):
-                st.markdown("#### Code")
+                st.markdown("#### 💻 Code")
                 if os.path.exists(st.session_state.get('executed_nb_path', '')):
                     with open(st.session_state['executed_nb_path'], "rb") as f:
-                        st.download_button("Notebook (.ipynb)", f, file_name=os.path.basename(st.session_state['executed_nb_path']))
+                        st.download_button("Notebook (.ipynb)", f, file_name=os.path.basename(st.session_state['executed_nb_path']), use_container_width=True, type="primary")
                 if os.path.exists(st.session_state.get('py_path', '')):
                     with open(st.session_state['py_path'], "rb") as f:
-                        st.download_button("Script (.py)", f, file_name=os.path.basename(st.session_state['py_path']))
+                        st.download_button("Script (.py)", f, file_name=os.path.basename(st.session_state['py_path']), use_container_width=True)
                     
         with col2:
             with st.container(border=True):
-                st.markdown("#### Reports")
-                if 'pdf_path' in st.session_state and os.path.exists(st.session_state['pdf_path']):
-                    with open(st.session_state['pdf_path'], "rb") as f:
-                        st.download_button("PDF", f, file_name=os.path.basename(st.session_state['pdf_path']))
+                st.markdown("#### 📊 Reports")
                 if os.path.exists(st.session_state.get('html_path', '')):
                     with open(st.session_state['html_path'], "rb") as f:
-                        st.download_button("HTML", f, file_name=os.path.basename(st.session_state['html_path']), mime='text/html')
-                if 'md_path' in st.session_state and os.path.exists(st.session_state['md_path']):
-                    pass
+                        st.download_button("HTML (Interactive)", f, file_name=os.path.basename(st.session_state['html_path']), mime='text/html', use_container_width=True, type="primary")
+                if 'pdf_path' in st.session_state and os.path.exists(st.session_state['pdf_path']):
+                    with open(st.session_state['pdf_path'], "rb") as f:
+                        st.download_button("PDF", f, file_name=os.path.basename(st.session_state['pdf_path']), use_container_width=True)
                 if 'docx_path' in st.session_state and os.path.exists(st.session_state['docx_path']):
                     with open(st.session_state['docx_path'], "rb") as f:
-                        st.download_button("DOCX", f, file_name=os.path.basename(st.session_state['docx_path']))
+                        st.download_button("DOCX", f, file_name=os.path.basename(st.session_state['docx_path']), use_container_width=True)
                     
         with col3:
             with st.container(border=True):
-                st.markdown("#### Cleaned Datasets")
+                st.markdown("#### 🧹 Cleaned Datasets")
                 if 'csv_path' in st.session_state and os.path.exists(st.session_state['csv_path']):
                     with open(st.session_state['csv_path'], "rb") as f:
-                        st.download_button("CSV", f, file_name=os.path.basename(st.session_state['csv_path']))
+                        st.download_button("CSV", f, file_name=os.path.basename(st.session_state['csv_path']), use_container_width=True, type="primary")
                 if 'excel_path' in st.session_state and os.path.exists(st.session_state['excel_path']):
                     with open(st.session_state['excel_path'], "rb") as f:
-                        st.download_button("Excel (.xlsx)", f, file_name=os.path.basename(st.session_state['excel_path']))
+                        st.download_button("Excel (.xlsx)", f, file_name=os.path.basename(st.session_state['excel_path']), use_container_width=True)
                 if 'xls_path' in st.session_state and os.path.exists(st.session_state['xls_path']):
                     with open(st.session_state['xls_path'], "rb") as f:
-                        st.download_button("Excel (.xls)", f, file_name=os.path.basename(st.session_state['xls_path']))
+                        st.download_button("Excel (.xls)", f, file_name=os.path.basename(st.session_state['xls_path']), use_container_width=True)
                 if 'parquet_path' in st.session_state and os.path.exists(st.session_state['parquet_path']):
                     with open(st.session_state['parquet_path'], "rb") as f:
-                        st.download_button("Parquet", f, file_name=os.path.basename(st.session_state['parquet_path']))
+                        st.download_button("Parquet", f, file_name=os.path.basename(st.session_state['parquet_path']), use_container_width=True)
                     
         # Show Token Usage
-        st.markdown("### LLM Token Usage & Cost (Testing Purposes)")
-        if 'llm_logs' in st.session_state and st.session_state['llm_logs']:
-            # Reorder columns to put timestamp and file first if they exist
-            df_usage = pd.DataFrame(st.session_state['llm_logs'])
-            if 'timestamp' in df_usage.columns and 'file' in df_usage.columns:
-                cols = ['timestamp', 'file'] + [c for c in df_usage.columns if c not in ['timestamp', 'file']]
-                df_usage = df_usage[cols]
-            st.dataframe(df_usage)
-            st.write(f"**Total Cost:** ${df_usage['cost'].sum():.6f}")
-        else:
-            st.write("No LLM calls logged.")
+        st.markdown("<br>", unsafe_allow_html=True)
+        with st.expander("⚙️ Diagnostics & Token Usage"):
+            if 'llm_logs' in st.session_state and st.session_state['llm_logs']:
+                df_usage = pd.DataFrame(st.session_state['llm_logs'])
+                if 'timestamp' in df_usage.columns and 'file' in df_usage.columns:
+                    cols = ['timestamp', 'file'] + [c for c in df_usage.columns if c not in ['timestamp', 'file']]
+                    df_usage = df_usage[cols]
+                st.dataframe(df_usage, use_container_width=True)
+                st.write(f"**Total Run Cost:** ${df_usage['cost'].sum():.6f}")
+            else:
+                st.write("No LLM calls logged.")
 
