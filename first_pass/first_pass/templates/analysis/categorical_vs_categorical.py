@@ -1,0 +1,49 @@
+from typing import List, Any, Optional
+from first_pass.schemas import DataProfile
+from first_pass.templates.base import AnalysisTemplate
+import pandas as pd
+
+def _get_cats(columns: List[str], params: dict) -> tuple[str, str]:
+    c1 = params.get('row', params.get('x', columns[0] if len(columns) > 0 else 'None'))
+    c2 = params.get('col', params.get('stack', columns[1] if len(columns) > 1 else 'None'))
+    return c1, c2
+
+class CrosstabTable(AnalysisTemplate):
+    id = "crosstab_table"
+    @classmethod
+    def get_params_schema(cls) -> Any: return {"row": str, "col": str, "normalize": str}
+    @classmethod
+    def check_preconditions(cls, columns: List[str], params: dict, profile: DataProfile) -> Optional[str]:
+        return None
+        
+    @classmethod
+    def generate_code(cls, columns: List[str], params: dict) -> str:
+        row, col = _get_cats(columns, params)
+        norm = params.get('normalize', False)
+        return f"display(pd.crosstab(df['{row}'], df['{col}'], normalize={norm}))"
+
+class CrosstabHeatmap(AnalysisTemplate):
+    id = "crosstab_heatmap"
+    @classmethod
+    def get_params_schema(cls) -> Any: return {"row": str, "col": str, "normalize": str}
+    @classmethod
+    def check_preconditions(cls, columns: List[str], params: dict, profile: DataProfile) -> Optional[str]:
+        return None
+        
+    @classmethod
+    def generate_code(cls, columns: List[str], params: dict) -> str:
+        row, col = _get_cats(columns, params)
+        return f"import seaborn as sns; import matplotlib.pyplot as plt; import pandas as pd\nsns.heatmap(pd.crosstab(df['{row}'], df['{col}']), annot=True, fmt='g'); plt.show()"
+
+class StackedBar(AnalysisTemplate):
+    id = "stacked_bar"
+    @classmethod
+    def get_params_schema(cls) -> Any: return {"x": str, "stack": str, "percent": bool}
+    @classmethod
+    def check_preconditions(cls, columns: List[str], params: dict, profile: DataProfile) -> Optional[str]:
+        return None
+        
+    @classmethod
+    def generate_code(cls, columns: List[str], params: dict) -> str:
+        x, stack = _get_cats(columns, params)
+        return f"import matplotlib.pyplot as plt; import pandas as pd\npd.crosstab(df['{x}'], df['{stack}']).plot(kind='bar', stacked=True); plt.show()"
