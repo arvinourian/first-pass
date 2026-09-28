@@ -39,20 +39,13 @@ def plan_analysis(profile: DataProfile, playbooks: List[Playbook], user_text: st
 CRITICAL: Only use templates that are explicitly specified in the provided Playbooks. Do not hallucinate template IDs.
 
 Planner selection rules:
-1. Prioritize analyses involving columns or goals the user mentioned in their
-   text input.
-2. Prefer breadth over depth: one analysis per distinct question, not multiple
-   views of the same relationship.
-3. Respect the analysis cap (default 8, configurable). Rank candidates by expected usefulness for a
-   first look.
-4. List candidates that were considered but cut by the cap in a
-   `further_analyses` field of the plan. The notebook renders these as a
-   "Further analyses to consider" section — this is how First Pass points the
-   user in the right direction.
-5. Never select a template whose "Applies when" preconditions are not met.
-6. Never use pie charts, 3D charts, dual-axis charts, or word clouds.
-7. Every plan item must include `template_id`, `columns`, `params`,
-   `rationale` (one sentence), and `playbook_ids`.
+1. Prioritize analyses involving columns or goals the user mentioned in their text input.
+2. Be EXHAUSTIVE and COMPREHENSIVE. This is an automated Exploratory Data Analysis tool. Do not just pick 1 or 2 analyses; output a full suite of analyses that deeply explore the dataset.
+3. Group multiple distributions together using the `multi_hist` and `multi_bar` templates instead of outputting dozens of single charts.
+4. Utilize advanced tools like `ols_regression`, `scatter_regression`, and `custom_code` if there is a clear target variable or interesting interactions.
+5. If there are interesting avenues for future investigation that are beyond the scope of these templates, list them in the `further_analyses` field.
+6. Never select a template whose "Applies when" preconditions are not met.
+7. Every plan item must include `template_id`, `columns`, `params`, `rationale` (one sentence), and `playbook_ids`.
 """
     
     context = f"Cleaned Data Profile:\n{profile.model_dump_json(exclude_none=True)}\n\n"

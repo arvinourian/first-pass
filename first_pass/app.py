@@ -107,9 +107,9 @@ if uploaded_file is not None:
             my_bar.progress(70, text="Stage 5: RAG Pass 2 (Analysis Plan)...")
             
             query_a = f"analysis distribution categories correlations trends. " + combined_instructions
-            analysis_pbs = idx.hybrid_search(query_a, "analysis", top_k=6)
+            analysis_pbs = idx.hybrid_search(query_a, "analysis", top_k=15)
             if not analysis_pbs and idx.playbooks:
-                analysis_pbs = [pb for pb in idx.playbooks if pb.category == 'analysis'][:6]
+                analysis_pbs = [pb for pb in idx.playbooks if pb.category == 'analysis'][:15]
                 
             analysis_plan = plan_analysis(cleaned_profile, analysis_pbs, combined_instructions)
             
