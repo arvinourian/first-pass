@@ -47,7 +47,7 @@ class TopNgrams(AnalysisTemplate):
             f"        ngrams.extend([' '.join(w_list[i:i+{n}]) for i in range(len(w_list)-{n}+1)])\n"
             f"counts = pd.Series(Counter(ngrams)).sort_values(ascending=False).head({top_k})\n"
             f"plt.figure(figsize=(10, 6))\n"
-            f"sns.barplot(x=counts.values, y=counts.index, palette='Blues_r')\n"
+            f"sns.barplot(x=counts.values, y=counts.index, hue=counts.index, palette='Blues_r', legend=False)\n"
             f"plt.title(f'Top {{min({top_k}, len(counts))}} {n}-grams in {col}')\n"
             f"plt.tight_layout(); plt.show()\n"
         )

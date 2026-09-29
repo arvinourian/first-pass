@@ -38,7 +38,7 @@ class TargetCorrRanked(AnalysisTemplate):
             f"if {repr(target)} in num_df.columns:\n"
             f"    corrs = num_df.corr()[{repr(target)}].drop({repr(target)}).sort_values(key=abs, ascending=False).head({top_k})\n"
             f"    plt.figure(figsize=(10, 6))\n"
-            f"    sns.barplot(x=corrs.values, y=corrs.index, palette='coolwarm')\n"
+            f"    sns.barplot(x=corrs.values, y=corrs.index, hue=corrs.index, palette='coolwarm', legend=False)\n"
             f"    plt.title(f'Top {{min({top_k}, len(corrs))}} Correlations with {{{target}}}')\n"
             f"    plt.tight_layout(); plt.show()\n"
         )
@@ -65,7 +65,7 @@ class MutualInfoRanked(AnalysisTemplate):
             f"    mi = mutual_info_classif(df_clean[num_cols], df_clean[{repr(target)}]) if is_cat else mutual_info_regression(df_clean[num_cols], df_clean[{repr(target)}])\n"
             f"    mi_series = pd.Series(mi, index=num_cols).sort_values(ascending=False).head({top_k})\n"
             f"    plt.figure(figsize=(10, 6))\n"
-            f"    sns.barplot(x=mi_series.values, y=mi_series.index, palette='viridis')\n"
+            f"    sns.barplot(x=mi_series.values, y=mi_series.index, hue=mi_series.index, palette='viridis', legend=False)\n"
             f"    plt.title(f'Top Mutual Information with {{{target}}}')\n"
             f"    plt.tight_layout(); plt.show()\n"
         )
@@ -85,7 +85,7 @@ class TargetRateByCat(AnalysisTemplate):
             f"import matplotlib.pyplot as plt\n"
             f"rate = df.groupby({repr(cat)})[{repr(target)}].mean().sort_values(ascending=False)\n"
             f"plt.figure(figsize=(10, 6))\n"
-            f"sns.barplot(x=rate.values, y=rate.index, palette='mako')\n"
+            f"sns.barplot(x=rate.values, y=rate.index, hue=rate.index, palette='mako', legend=False)\n"
             f"plt.title(f'Mean {{{target}}} by {{{cat}}}')\n"
             f"plt.tight_layout(); plt.show()\n"
         )
