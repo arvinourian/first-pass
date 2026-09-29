@@ -119,8 +119,6 @@ if uploaded_file is not None:
                 AnalysisItem(template_id="column_overview", columns=[], rationale="Overview of column types and missing values.", playbook_ids=[]),
                 AnalysisItem(template_id="summary_stats", columns=[], rationale="High-level summary statistics of all columns.", playbook_ids=[])
             ]
-            if any(col.null_percent > 0 for col in cleaned_profile.columns):
-                static_analyses.append(AnalysisItem(template_id="missing_bar", columns=[], params='{"min_null_pct": 0}', rationale="Visualize missing values across columns.", playbook_ids=[]))
                 
             static_section = AnalysisSection(
                 title="Data Overview",
