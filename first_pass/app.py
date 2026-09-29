@@ -114,7 +114,7 @@ if uploaded_file is not None:
             analysis_plan = plan_analysis(cleaned_profile, analysis_pbs, combined_instructions)
             
             # Prepend static overview analyses
-            from first_pass.schemas import AnalysisItem
+            from first_pass.schemas import AnalysisItem, AnalysisSection
             static_analyses = [
                 AnalysisItem(template_id="column_overview", columns=[], rationale="Overview of column types and missing values.", playbook_ids=[]),
                 AnalysisItem(template_id="summary_stats", columns=[], rationale="High-level summary statistics of all columns.", playbook_ids=[])
@@ -122,7 +122,12 @@ if uploaded_file is not None:
             if any(col.null_percent > 0 for col in cleaned_profile.columns):
                 static_analyses.append(AnalysisItem(template_id="missing_bar", columns=[], params='{"min_null_pct": 0}', rationale="Visualize missing values across columns.", playbook_ids=[]))
                 
-            analysis_plan.analyses = static_analyses + analysis_plan.analyses
+            static_section = AnalysisSection(
+                title="Data Overview",
+                description="High-level summary of data types, summary statistics, and missing values.",
+                analyses=static_analyses
+            )
+            analysis_plan.sections.insert(0, static_section)
             
             my_bar.progress(85, text="Stage 6: Generating Notebook...")
             
