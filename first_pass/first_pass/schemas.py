@@ -38,11 +38,17 @@ class AnalysisItem(BaseModel):
     rationale: str
     playbook_ids: List[str]
 
+class AnalysisSection(BaseModel):
+    title: str
+    description: str
+    analyses: List[AnalysisItem]
+
 class FurtherAnalysis(BaseModel):
     template_id: str
     columns: List[str]
     rationale: str
 
 class AnalysisPlan(BaseModel):
-    analyses: List[AnalysisItem]
+    target_variables: List[str] = Field(default_factory=list, description="Primary outcome variables (e.g. price, churn)")
+    sections: List[AnalysisSection]
     further_analyses: List[FurtherAnalysis] = Field(default_factory=list)

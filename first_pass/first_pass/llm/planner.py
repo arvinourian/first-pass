@@ -39,13 +39,14 @@ def plan_analysis(profile: DataProfile, playbooks: List[Playbook], user_text: st
 CRITICAL: Only use templates that are explicitly specified in the provided Playbooks. Do not hallucinate template IDs.
 
 Planner selection rules:
-1. Prioritize analyses involving columns or goals the user mentioned in their text input.
-2. Be EXHAUSTIVE and COMPREHENSIVE. This is an automated Exploratory Data Analysis tool. Do not just pick 1 or 2 analyses; output a full suite of analyses that deeply explore the dataset.
-3. Group multiple distributions together using the `multi_hist` and `multi_bar` templates instead of outputting dozens of single charts.
-4. Utilize advanced tools like `ols_regression`, `scatter_regression`, and `custom_code` if there is a clear target variable or interesting interactions.
-5. If there are interesting avenues for future investigation that are beyond the scope of these templates, list them in the `further_analyses` field.
-6. Never select a template whose "Applies when" preconditions are not met.
-7. Every plan item must include `template_id`, `columns`, `params`, `rationale` (one sentence), and `playbook_ids`.
+1. Prioritize analyses involving columns or goals the user mentioned in their text input. Explicitly extract and list the `target_variables`.
+2. Group your analyses into logical, thematic `sections` (e.g. "Data Overview", "Target Distribution", "Geographic Trends"). This provides a narrative flow.
+3. Be EXHAUSTIVE and COMPREHENSIVE in your exploration, but PRUNE redundant charts. Do not pick 5 simple bar charts; use `multi_bar` instead.
+4. Utilize advanced tools like `ols_regression`, `scatter_regression`, and `target_corr_ranked` if there is a clear target variable.
+5. FEATURE ENGINEERING: Use the `custom_code` template to write free-form pandas code (e.g., calculating ratios, mapping categories, creating derived metrics) at the beginning of a section before visualizing them. Assume `df`, `pd`, `sns`, `plt` are loaded.
+6. If there are interesting avenues for future investigation that are beyond the scope of these templates, list them in the `further_analyses` field.
+7. Never select a template whose "Applies when" preconditions are not met.
+8. Every plan item must include `template_id`, `columns`, `params`, `rationale` (one sentence), and `playbook_ids`.
 """
     
     context = f"Cleaned Data Profile:\n{profile.model_dump_json(exclude_none=True)}\n\n"
@@ -69,20 +70,21 @@ Planner selection rules:
 
     def _validate(plan: AnalysisPlan) -> AnalysisPlan:
         errors = []
-        for item in plan.analyses:
-            tmpl = get_template(item.template_id)
-            if not tmpl:
-                # If template doesn't exist, skip validation (it might be an overview template not implemented yet)
-                continue
-            
-            try:
-                params_dict = json.loads(item.params)
-            except Exception:
-                params_dict = {}
+        for sec in plan.sections:
+            for item in sec.analyses:
+                tmpl = get_template(item.template_id)
+                if not tmpl:
+                    # If template doesn't exist, skip validation (it might be an overview template not implemented yet)
+                    continue
                 
-            err = tmpl.check_preconditions(item.columns, params_dict, profile)
-            if err:
-                errors.append(f"Template {item.template_id} precondition failed for columns {item.columns}: {err}")
+                try:
+                    params_dict = json.loads(item.params)
+                except Exception:
+                    params_dict = {}
+                    
+                err = tmpl.check_preconditions(item.columns, params_dict, profile)
+                if err:
+                    errors.append(f"Template {item.template_id} precondition failed for columns {item.columns}: {err}")
         if errors:
             raise ValueError("\n".join(errors))
         return plan

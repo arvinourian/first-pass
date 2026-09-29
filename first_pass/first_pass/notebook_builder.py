@@ -120,30 +120,36 @@ class NotebookBuilder:
         
         # 7. Analysis Plan
         analysis_md = "## Analysis Plan\n"
-        if not analysis_plan.analyses:
+        if not analysis_plan.sections:
             analysis_md += "No analyses planned.\n"
         else:
-            analysis_md += "| Step | Columns | Template | Rationale | Playbooks |\n"
-            analysis_md += "|---|---|---|---|---|\n"
-            for i, item in enumerate(analysis_plan.analyses):
-                cols = ", ".join(item.columns)
-                pbs = ", ".join(item.playbook_ids)
-                analysis_md += f"| {i+1} | {cols} | `{item.template_id}` | {item.rationale} | {pbs} |\n"
+            if analysis_plan.target_variables:
+                analysis_md += f"**Target Variables:** {', '.join(analysis_plan.target_variables)}\n\n"
+            for s_idx, sec in enumerate(analysis_plan.sections):
+                analysis_md += f"### Section {s_idx+1}: {sec.title}\n{sec.description}\n\n"
+                analysis_md += "| Step | Columns | Template | Rationale | Playbooks |\n"
+                analysis_md += "|---|---|---|---|---|\n"
+                for i, item in enumerate(sec.analyses):
+                    cols = ", ".join(item.columns)
+                    pbs = ", ".join(item.playbook_ids)
+                    analysis_md += f"| {i+1} | {cols} | `{item.template_id}` | {item.rationale} | {pbs} |\n"
+                analysis_md += "\n"
         self.add_markdown(analysis_md)
         
         # 8. Analysis execution
         self.add_markdown("## Analysis Execution")
-        for item in analysis_plan.analyses:
-            self.add_markdown(f"### {item.template_id}\n{item.rationale}")
-            code = self._render_template('analysis', item.template_id, item.columns, item.params)
-            # Wrap to catch errors
-            error_wrapper = (
-                f"try:\n"
-                f"    {code.replace(chr(10), chr(10) + '    ')}\n"
-                f"except Exception as e:\n"
-                f"    print(f'\\nError executing {item.template_id}: {{e}}')\n"
-            )
-            self.add_code(error_wrapper)
+        for s_idx, sec in enumerate(analysis_plan.sections):
+            self.add_markdown(f"## {sec.title}\n{sec.description}")
+            for item in sec.analyses:
+                self.add_markdown(f"### {item.template_id}\n{item.rationale}")
+                code = self._render_template('analysis', item.template_id, item.columns, item.params)
+                error_wrapper = (
+                    f"try:\n"
+                    f"    {code.replace(chr(10), chr(10) + '    ')}\n"
+                    f"except Exception as e:\n"
+                    f"    print(f'\\nError executing {item.template_id}: {{e}}')\n"
+                )
+                self.add_code(error_wrapper)
             
         # 8.5 Further Analyses
         if hasattr(analysis_plan, 'further_analyses') and analysis_plan.further_analyses:
