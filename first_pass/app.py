@@ -179,9 +179,8 @@ if uploaded_file is not None:
             st.error(f"An error occurred: {e}")
             st.text(traceback.format_exc())
 
-    if st.session_state.get('run_complete'):
-        st.success(f"🎉 First Pass completed successfully for **{st.session_state.get('last_file', 'your file')}**!")
-        
+    @st.fragment
+    def render_downloads():
         st.markdown(f"<h3 style='margin-top: 2rem;'>Downloads: {st.session_state.get('last_file', '')}</h3>", unsafe_allow_html=True)
         col1, col2, col3 = st.columns(3)
         
@@ -199,7 +198,6 @@ if uploaded_file is not None:
                     if st.button("Generate Script (.py)", use_container_width=True):
                         with st.spinner("Generating..."):
                             st.session_state['py_path'] = export_to_py(st.session_state['executed_nb_path'], "temp")
-                        st.rerun()
                     
         with col2:
             with st.container(border=True):
@@ -215,7 +213,6 @@ if uploaded_file is not None:
                     if st.button("Generate PDF", use_container_width=True):
                         with st.spinner("Generating..."):
                             st.session_state['pdf_path'] = export_to_pdf(st.session_state['executed_nb_path'], "temp")
-                        st.rerun()
                 
                 if 'docx_path' in st.session_state and os.path.exists(st.session_state['docx_path']):
                     with open(st.session_state['docx_path'], "rb") as f:
@@ -224,11 +221,10 @@ if uploaded_file is not None:
                     if st.button("Generate DOCX", use_container_width=True):
                         with st.spinner("Generating..."):
                             st.session_state['docx_path'] = export_to_docx(st.session_state['executed_nb_path'], "temp")
-                        st.rerun()
                     
         with col3:
             with st.container(border=True):
-                st.markdown("#### 🧹 Cleaned Datasets")
+                st.markdown("#### 💾 Cleaned Datasets")
                 if 'csv_path' in st.session_state and os.path.exists(st.session_state['csv_path']):
                     with open(st.session_state['csv_path'], "rb") as f:
                         st.download_button("CSV", f, file_name=os.path.basename(st.session_state['csv_path']), use_container_width=True, type="primary")
@@ -241,6 +237,10 @@ if uploaded_file is not None:
                 if 'parquet_path' in st.session_state and os.path.exists(st.session_state['parquet_path']):
                     with open(st.session_state['parquet_path'], "rb") as f:
                         st.download_button("Parquet", f, file_name=os.path.basename(st.session_state['parquet_path']), use_container_width=True)
+
+    if st.session_state.get('run_complete'):
+        st.success(f"🚀 First Pass completed successfully for **{st.session_state.get('last_file', 'your file')}**!")
+        render_downloads()
                     
         # Show Token Usage
         st.markdown("<br>", unsafe_allow_html=True)
