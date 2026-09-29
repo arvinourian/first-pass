@@ -10,7 +10,7 @@ from first_pass.retrieval.index import PlaybookIndex
 from first_pass.llm.planner import plan_cleaning, plan_analysis
 from first_pass.llm.client import llm_usage_logs
 from first_pass.notebook_builder import NotebookBuilder
-from first_pass.export import export_notebook
+from first_pass.export import export_to_html, export_to_py, export_to_docx, export_to_pdf
 
 st.set_page_config(page_title="First Pass", page_icon="🚀", layout="wide")
 
@@ -146,8 +146,8 @@ if uploaded_file is not None:
             executed_nb_path = os.path.join("temp", f"{os.path.splitext(uploaded_file.name)[0]}_FirstPass_Executed.ipynb")
             builder.execute_notebook(nb_path, executed_nb_path)
             
-            my_bar.progress(95, text="Exporting to final formats...")
-            py_path, html_path, md_path, docx_path, pdf_path = export_notebook(executed_nb_path, "temp")
+            my_bar.progress(95, text="Exporting to HTML format...")
+            html_path = export_to_html(executed_nb_path, "temp")
             
             # Clear dynamic progress bar because it will be drawn statically
             progress_placeholder.empty()
@@ -167,11 +167,7 @@ if uploaded_file is not None:
             # Save results in session state
             st.session_state['run_complete'] = True
             st.session_state['executed_nb_path'] = executed_nb_path
-            st.session_state['py_path'] = py_path
             st.session_state['html_path'] = html_path
-            st.session_state['md_path'] = md_path
-            st.session_state['docx_path'] = docx_path
-            st.session_state['pdf_path'] = pdf_path
             st.session_state['csv_path'] = csv_path
             st.session_state['excel_path'] = excel_path
             st.session_state['xls_path'] = xls_path
@@ -195,9 +191,15 @@ if uploaded_file is not None:
                 if os.path.exists(st.session_state.get('executed_nb_path', '')):
                     with open(st.session_state['executed_nb_path'], "rb") as f:
                         st.download_button("Notebook (.ipynb)", f, file_name=os.path.basename(st.session_state['executed_nb_path']), use_container_width=True, type="primary")
-                if os.path.exists(st.session_state.get('py_path', '')):
+                
+                if 'py_path' in st.session_state and os.path.exists(st.session_state['py_path']):
                     with open(st.session_state['py_path'], "rb") as f:
-                        st.download_button("Script (.py)", f, file_name=os.path.basename(st.session_state['py_path']), use_container_width=True)
+                        st.download_button("Download Script (.py)", f, file_name=os.path.basename(st.session_state['py_path']), use_container_width=True)
+                else:
+                    if st.button("Generate Script (.py)", use_container_width=True):
+                        with st.spinner("Generating..."):
+                            st.session_state['py_path'] = export_to_py(st.session_state['executed_nb_path'], "temp")
+                        st.rerun()
                     
         with col2:
             with st.container(border=True):
@@ -205,12 +207,24 @@ if uploaded_file is not None:
                 if os.path.exists(st.session_state.get('html_path', '')):
                     with open(st.session_state['html_path'], "rb") as f:
                         st.download_button("HTML (Interactive)", f, file_name=os.path.basename(st.session_state['html_path']), mime='text/html', use_container_width=True, type="primary")
+                
                 if 'pdf_path' in st.session_state and os.path.exists(st.session_state['pdf_path']):
                     with open(st.session_state['pdf_path'], "rb") as f:
-                        st.download_button("PDF", f, file_name=os.path.basename(st.session_state['pdf_path']), use_container_width=True)
+                        st.download_button("Download PDF", f, file_name=os.path.basename(st.session_state['pdf_path']), use_container_width=True)
+                else:
+                    if st.button("Generate PDF", use_container_width=True):
+                        with st.spinner("Generating..."):
+                            st.session_state['pdf_path'] = export_to_pdf(st.session_state['executed_nb_path'], "temp")
+                        st.rerun()
+                
                 if 'docx_path' in st.session_state and os.path.exists(st.session_state['docx_path']):
                     with open(st.session_state['docx_path'], "rb") as f:
-                        st.download_button("DOCX", f, file_name=os.path.basename(st.session_state['docx_path']), use_container_width=True)
+                        st.download_button("Download DOCX", f, file_name=os.path.basename(st.session_state['docx_path']), use_container_width=True)
+                else:
+                    if st.button("Generate DOCX", use_container_width=True):
+                        with st.spinner("Generating..."):
+                            st.session_state['docx_path'] = export_to_docx(st.session_state['executed_nb_path'], "temp")
+                        st.rerun()
                     
         with col3:
             with st.container(border=True):
