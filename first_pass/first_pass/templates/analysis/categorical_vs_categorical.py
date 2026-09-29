@@ -33,7 +33,20 @@ class CrosstabHeatmap(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         row, col = _get_cats(columns, params)
-        return f"import seaborn as sns; import matplotlib.pyplot as plt; import pandas as pd\nsns.heatmap(pd.crosstab(df['{row}'], df['{col}']), annot=True, fmt='g'); plt.tight_layout(); plt.show()"
+        return (
+            f"import seaborn as sns\n"
+            f"import matplotlib.pyplot as plt\n"
+            f"import pandas as pd\n"
+            f"ct = pd.crosstab(df[{repr(row)}], df[{repr(col)}])\n"
+            f"width = max(8, ct.shape[1] * 0.7)\n"
+            f"height = max(6, ct.shape[0] * 0.5)\n"
+            f"plt.figure(figsize=(width, height))\n"
+            f"sns.heatmap(ct, annot=True, fmt='g', cmap='Blues')\n"
+            f"plt.xticks(rotation=45, ha='right')\n"
+            f"plt.yticks(rotation=0)\n"
+            f"plt.title(f'{{ct.index.name}} vs {{ct.columns.name}}')\n"
+            f"plt.tight_layout(); plt.show()\n"
+        )
 
 class StackedBar(AnalysisTemplate):
     id = "stacked_bar"
@@ -46,7 +59,16 @@ class StackedBar(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         x, stack = _get_cats(columns, params)
-        return f"import matplotlib.pyplot as plt; import pandas as pd\npd.crosstab(df['{x}'], df['{stack}']).plot(kind='bar', stacked=True); plt.tight_layout(); plt.show()"
+        return (
+            f"import matplotlib.pyplot as plt\n"
+            f"import pandas as pd\n"
+            f"ct = pd.crosstab(df[{repr(x)}], df[{repr(stack)}])\n"
+            f"width = max(10, ct.shape[0] * 0.5 + 2)\n"
+            f"ax = ct.plot(kind='bar', stacked=True, figsize=(width, 6), colormap='viridis')\n"
+            f"plt.xticks(rotation=45, ha='right')\n"
+            f"plt.legend(title={repr(stack)}, bbox_to_anchor=(1.05, 1), loc='upper left')\n"
+            f"plt.tight_layout(); plt.show()\n"
+        )
 
 
 class ChiSquare(AnalysisTemplate):
