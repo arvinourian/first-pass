@@ -47,27 +47,27 @@ class StackedBar(AnalysisTemplate):
     def generate_code(cls, columns: List[str], params: dict) -> str:
         x, stack = _get_cats(columns, params)
         return f"import matplotlib.pyplot as plt; import pandas as pd\npd.crosstab(df['{x}'], df['{stack}']).plot(kind='bar', stacked=True); plt.show()"
-
-class ChiSquare(AnalysisTemplate):
-    id = "chi_square"
-    @classmethod
-    def get_params_schema(cls) -> Any: return {"row": str, "col": str}
-    @classmethod
-    def check_preconditions(cls, columns: List[str], params: dict, profile: DataProfile) -> Optional[str]: return None
-    @classmethod
-    def generate_code(cls, columns: List[str], params: dict) -> str:
-        row = params.get('row', columns[0] if columns else None)
-        col = params.get('col', columns[1] if len(columns) > 1 else None)
-        return (
-            f"import scipy.stats as stats\n"
-            f"import pandas as pd\n"
-            f"import numpy as np\n"
-            f"contingency = pd.crosstab(df[{repr(row)}], df[{repr(col)}])\n"
-            f"chi2, p_val, dof, expected = stats.chi2_contingency(contingency)\n"
-            f"n = contingency.sum().sum()\n"
-            f"min_dim = min(contingency.shape) - 1\n"
-            f"cramer_v = np.sqrt(chi2 / (n * min_dim)) if min_dim > 0 and n > 0 else 0\n"
-            f"print(f'Chi-square statistic: {{chi2:.4f}}')\n"
-            f"print(f'p-value: {{p_val:.4g}}')\n"
-            f"print(f\'CramÈr\'s V: {{cramer_v:.4f}}')\n"
-        )
+
+class ChiSquare(AnalysisTemplate):
+    id = "chi_square"
+    @classmethod
+    def get_params_schema(cls) -> Any: return {"row": str, "col": str}
+    @classmethod
+    def check_preconditions(cls, columns: List[str], params: dict, profile: DataProfile) -> Optional[str]: return None
+    @classmethod
+    def generate_code(cls, columns: List[str], params: dict) -> str:
+        row = params.get('row', columns[0] if columns else None)
+        col = params.get('col', columns[1] if len(columns) > 1 else None)
+        return (
+            f"import scipy.stats as stats\n"
+            f"import pandas as pd\n"
+            f"import numpy as np\n"
+            f"contingency = pd.crosstab(df[{repr(row)}], df[{repr(col)}])\n"
+            f"chi2, p_val, dof, expected = stats.chi2_contingency(contingency)\n"
+            f"n = contingency.sum().sum()\n"
+            f"min_dim = min(contingency.shape) - 1\n"
+            f"cramer_v = np.sqrt(chi2 / (n * min_dim)) if min_dim > 0 and n > 0 else 0\n"
+            f"print(f'Chi-square statistic: {{chi2:.4f}}')\n"
+            f"print(f'p-value: {{p_val:.4g}}')\n"
+            f"print(f\'Cram√©r\'s V: {{cramer_v:.4f}}')\n"
+        )

@@ -53,4 +53,4 @@ def get_template_code(category: str, template_id: str, columns: list, params: di
         if template_id in _ANALYSIS_TEMPLATES:
             return _ANALYSIS_TEMPLATES[template_id].generate_code(columns, params)
             
-    return f"# TODO: Implement template {template_id}"
+    return f"pass # TODO: Implement template {template_id}"
