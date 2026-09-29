@@ -17,7 +17,7 @@ class TextLengthDist(AnalysisTemplate):
             f"lengths = df[{repr(col)}].dropna().astype(str).str.len()\n"
             f"plt.figure(figsize=(10, 6))\n"
             f"sns.histplot(lengths, kde=True, bins=30)\n"
-            f"plt.title(f'Text Length Distribution: {{{col}}}')\n"
+            f"plt.title('Text Length Distribution: {col}')\n"
             f"plt.xlabel('Character Count')\n"
             f"plt.tight_layout(); plt.show()\n"
         )
@@ -48,6 +48,6 @@ class TopNgrams(AnalysisTemplate):
             f"counts = pd.Series(Counter(ngrams)).sort_values(ascending=False).head({top_k})\n"
             f"plt.figure(figsize=(10, 6))\n"
             f"sns.barplot(x=counts.values, y=counts.index, palette='Blues_r')\n"
-            f"plt.title(f'Top {{min({top_k}, len(counts))}} {n}-grams in {{{col}}}')\n"
+            f"plt.title(f'Top {{min({top_k}, len(counts))}} {n}-grams in {col}')\n"
             f"plt.tight_layout(); plt.show()\n"
         )
