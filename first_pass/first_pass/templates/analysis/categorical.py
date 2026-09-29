@@ -61,6 +61,7 @@ class MultiBar(AnalysisTemplate):
             f"    counts = df[col].value_counts().nlargest({top_n})\n"
             f"    sns.barplot(x=counts.index, y=counts.values, ax=ax, color='teal')\n"
             f"    ax.set_title(col)\n"
-            f"    ax.tick_params(axis='x', rotation=45, ha=\'right\')\n"
+            f"    plt.setp(ax.get_xticklabels(), rotation=45, ha='right')\n"
+            f"for ax in axes[len(cols):]: ax.set_visible(False)\n"
             f"plt.tight_layout(); plt.show()"
         )

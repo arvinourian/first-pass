@@ -85,6 +85,7 @@ class MultiHist(AnalysisTemplate):
             f"for ax, col in zip(axes, cols):\n"
             f"    sns.histplot(data=df, x=col, kde=True, color='teal', ax=ax)\n"
             f"    ax.set_title(col)\n"
+            f"for ax in axes[len(cols):]: ax.set_visible(False)\n"
             f"plt.tight_layout(); plt.show()"
         )
 
