@@ -17,7 +17,7 @@ class TargetDistribution(AnalysisTemplate):
             f"plt.figure(figsize=(8, 5))\n"
             f"sns.histplot(data=df, x={repr(target)}, kde=True) if df[{repr(target)}].dtype.kind in 'bifc' else sns.countplot(data=df, x={repr(target)})\n"
             f"plt.title(f'Target Distribution: {{{target}}}')\n"
-            f"plt.show()"
+            f"plt.tight_layout(); plt.show()"
         )
 
 class TargetCorrRanked(AnalysisTemplate):
@@ -40,7 +40,7 @@ class TargetCorrRanked(AnalysisTemplate):
             f"    plt.figure(figsize=(10, 6))\n"
             f"    sns.barplot(x=corrs.values, y=corrs.index, palette='coolwarm')\n"
             f"    plt.title(f'Top {{min({top_k}, len(corrs))}} Correlations with {{{target}}}')\n"
-            f"    plt.show()\n"
+            f"    plt.tight_layout(); plt.show()\n"
         )
 
 class MutualInfoRanked(AnalysisTemplate):
@@ -67,7 +67,7 @@ class MutualInfoRanked(AnalysisTemplate):
             f"    plt.figure(figsize=(10, 6))\n"
             f"    sns.barplot(x=mi_series.values, y=mi_series.index, palette='viridis')\n"
             f"    plt.title(f'Top Mutual Information with {{{target}}}')\n"
-            f"    plt.show()\n"
+            f"    plt.tight_layout(); plt.show()\n"
         )
 
 class TargetRateByCat(AnalysisTemplate):
@@ -87,5 +87,5 @@ class TargetRateByCat(AnalysisTemplate):
             f"plt.figure(figsize=(10, 6))\n"
             f"sns.barplot(x=rate.values, y=rate.index, palette='mako')\n"
             f"plt.title(f'Mean {{{target}}} by {{{cat}}}')\n"
-            f"plt.show()\n"
+            f"plt.tight_layout(); plt.show()\n"
         )

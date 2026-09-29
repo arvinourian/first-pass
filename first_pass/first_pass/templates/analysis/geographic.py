@@ -19,7 +19,7 @@ class LatlonScatter(AnalysisTemplate):
             f"plt.figure(figsize=(10, 8))\n"
             f"sns.scatterplot(data=df, x={repr(lon)}, y={repr(lat)}, hue={repr(hue)} if {repr(hue)} else None, alpha=0.5)\n"
             f"plt.title('Lat/Lon Scatter Plot')\n"
-            f"plt.show()\n"
+            f"plt.tight_layout(); plt.show()\n"
         )
 
 class RegionAgg(AnalysisTemplate):
@@ -41,7 +41,7 @@ class RegionAgg(AnalysisTemplate):
             f"plt.figure(figsize=(10, 8))\n"
             f"sns.barplot(x=agg_df.values, y=agg_df.index, palette='viridis')\n"
             f"plt.title(f'Top 20 Regions by {agg.capitalize()} of {{{val}}}')\n"
-            f"plt.show()\n"
+            f"plt.tight_layout(); plt.show()\n"
         )
 
 class Choropleth(AnalysisTemplate):

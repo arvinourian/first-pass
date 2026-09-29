@@ -19,7 +19,7 @@ class TextLengthDist(AnalysisTemplate):
             f"sns.histplot(lengths, kde=True, bins=30)\n"
             f"plt.title(f'Text Length Distribution: {{{col}}}')\n"
             f"plt.xlabel('Character Count')\n"
-            f"plt.show()\n"
+            f"plt.tight_layout(); plt.show()\n"
         )
 
 class TopNgrams(AnalysisTemplate):
@@ -49,5 +49,5 @@ class TopNgrams(AnalysisTemplate):
             f"plt.figure(figsize=(10, 6))\n"
             f"sns.barplot(x=counts.values, y=counts.index, palette='Blues_r')\n"
             f"plt.title(f'Top {{min({top_k}, len(counts))}} {n}-grams in {{{col}}}')\n"
-            f"plt.show()\n"
+            f"plt.tight_layout(); plt.show()\n"
         )

@@ -13,7 +13,7 @@ class HistogramKde(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         col = params.get('column', columns[0] if columns else None)
-        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.histplot(data=df, x='{col}', kde=True, color='teal', line_kws={{'color': 'orange', 'linewidth': 2}})\nplt.show()"
+        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.histplot(data=df, x='{col}', kde=True, color='teal', line_kws={{'color': 'orange', 'linewidth': 2}})\nplt.tight_layout(); plt.show()"
 
 class HistogramLog(AnalysisTemplate):
     id = "histogram_log"
@@ -26,7 +26,7 @@ class HistogramLog(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         col = params.get('column', columns[0] if columns else None)
-        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.histplot(data=df, x='{col}', log_scale=True, color='teal')\nplt.show()"
+        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.histplot(data=df, x='{col}', log_scale=True, color='teal')\nplt.tight_layout(); plt.show()"
 
 class BoxMulti(AnalysisTemplate):
     id = "box_multi"
@@ -39,7 +39,7 @@ class BoxMulti(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         cols = params.get('columns', columns)
-        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.boxplot(data=df[{cols}], palette='Set2')\nplt.xticks(rotation=45); plt.show()"
+        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.boxplot(data=df[{cols}], palette='Set2')\nplt.xticks(rotation=45, ha=\'right\'); plt.tight_layout(); plt.show()"
 
 class Violin(AnalysisTemplate):
     id = "violin"
@@ -52,7 +52,7 @@ class Violin(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         col = params.get('column', columns[0] if columns else None)
-        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(8, 6))\nsns.violinplot(data=df, y='{col}', color='teal')\nplt.show()"
+        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(8, 6))\nsns.violinplot(data=df, y='{col}', color='teal')\nplt.tight_layout(); plt.show()"
 
 class Ecdf(AnalysisTemplate):
     id = "ecdf"
@@ -65,7 +65,7 @@ class Ecdf(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         col = params.get('column', columns[0] if columns else None)
-        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.ecdfplot(data=df, x='{col}', color='teal', linewidth=2)\nplt.show()"
+        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.ecdfplot(data=df, x='{col}', color='teal', linewidth=2)\nplt.tight_layout(); plt.show()"
 
 class MultiHist(AnalysisTemplate):
     id = "multi_hist"
@@ -121,5 +121,5 @@ class QqPlot(AnalysisTemplate):
             f"plt.figure(figsize=(8, 6))\n"
             f"stats.probplot(df['{col}'].dropna(), dist='norm', plot=plt)\n"
             f"plt.title(f'Q-Q Plot: {{{col}}}')\n"
-            f"plt.show()"
+            f"plt.tight_layout(); plt.show()"
         )

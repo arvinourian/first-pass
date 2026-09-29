@@ -33,7 +33,7 @@ class PcaOverview(AnalysisTemplate):
             f"    ax1.set_ylabel('PC2')\n"
             f"    ax2.bar(range(1, {n_comp} + 1), pca.explained_variance_ratio_)\n"
             f"    ax2.set_title('Explained Variance Ratio')\n"
-            f"    plt.show()\n"
+            f"    plt.tight_layout(); plt.show()\n"
         )
 
 class KmeansExplore(AnalysisTemplate):
@@ -64,5 +64,5 @@ class KmeansExplore(AnalysisTemplate):
             f"    plt.title('K-Means Elbow Plot')\n"
             f"    plt.xlabel('Number of Clusters (k)')\n"
             f"    plt.ylabel('Inertia')\n"
-            f"    plt.show()\n"
+            f"    plt.tight_layout(); plt.show()\n"
         )

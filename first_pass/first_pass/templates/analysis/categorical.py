@@ -13,7 +13,7 @@ class FreqBar(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         col = params.get('column', columns[0] if columns else None)
-        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\ndf['{col}'].value_counts().nlargest({params.get('top_n', 12)}).plot.bar(color='teal'); plt.xticks(rotation=45); plt.show()"
+        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\ndf['{col}'].value_counts().nlargest({params.get('top_n', 12)}).plot.bar(color='teal'); plt.xticks(rotation=45, ha=\'right\'); plt.tight_layout(); plt.show()"
 
 class ValueCountsTable(AnalysisTemplate):
     id = "value_counts_table"
@@ -39,7 +39,7 @@ class ParetoChart(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         col = params.get('column', columns[0] if columns else None)
-        return f"import matplotlib.pyplot as plt\ncounts = df['{col}'].value_counts().nlargest({params.get('top_n', 10)})\nfig, ax = plt.subplots(figsize=(10,6))\nax.bar(counts.index, counts.values, color='teal', alpha=0.7)\nax2 = ax.twinx()\nax2.plot(counts.index, counts.cumsum()/counts.sum()*100, color='orange', marker='D', ms=7, linewidth=2)\nplt.xticks(rotation=45); plt.show()"
+        return f"import matplotlib.pyplot as plt\ncounts = df['{col}'].value_counts().nlargest({params.get('top_n', 10)})\nfig, ax = plt.subplots(figsize=(10,6))\nax.bar(counts.index, counts.values, color='teal', alpha=0.7)\nax2 = ax.twinx()\nax2.plot(counts.index, counts.cumsum()/counts.sum()*100, color='orange', marker='D', ms=7, linewidth=2)\nplt.xticks(rotation=45, ha=\'right\'); plt.tight_layout(); plt.show()"
 
 class MultiBar(AnalysisTemplate):
     id = "multi_bar"
@@ -61,6 +61,6 @@ class MultiBar(AnalysisTemplate):
             f"    counts = df[col].value_counts().nlargest({top_n})\n"
             f"    sns.barplot(x=counts.index, y=counts.values, ax=ax, color='teal')\n"
             f"    ax.set_title(col)\n"
-            f"    ax.tick_params(axis='x', rotation=45)\n"
+            f"    ax.tick_params(axis='x', rotation=45, ha=\'right\')\n"
             f"plt.tight_layout(); plt.show()"
         )

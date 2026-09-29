@@ -16,7 +16,7 @@ class LineTime(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         d, v = _get_ts(columns, params)
-        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.groupby('{d}')['{v}'].{params.get('agg', 'sum')}().plot(kind='line', color='teal', linewidth=2)\nplt.title('{v} over time'); plt.show()"
+        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.groupby('{d}')['{v}'].{params.get('agg', 'sum')}().plot(kind='line', color='teal', linewidth=2)\nplt.title('{v} over time'); plt.tight_layout(); plt.show()"
 
 class ResampleAgg(AnalysisTemplate):
     id = "resample_agg"
@@ -27,7 +27,7 @@ class ResampleAgg(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         d, v = _get_ts(columns, params)
-        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.set_index('{d}')['{v}'].resample('{params.get('freq', 'D')}').{params.get('agg', 'sum')}().plot(color='teal', linewidth=2)\nplt.title('Resampled {v}'); plt.show()"
+        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.set_index('{d}')['{v}'].resample('{params.get('freq', 'D')}').{params.get('agg', 'sum')}().plot(color='teal', linewidth=2)\nplt.title('Resampled {v}'); plt.tight_layout(); plt.show()"
 
 class RollingMean(AnalysisTemplate):
     id = "rolling_mean"
@@ -38,7 +38,7 @@ class RollingMean(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         d, v = _get_ts(columns, params)
-        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\nts = df.set_index('{d}')['{v}'].sort_index()\nts.plot(alpha=0.4, color='gray', label='Raw')\nts.rolling(window={params.get('window', 7)}).mean().plot(color='orange', linewidth=2, label='Rolling')\nplt.legend(); plt.show()"
+        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\nts = df.set_index('{d}')['{v}'].sort_index()\nts.plot(alpha=0.4, color='gray', label='Raw')\nts.rolling(window={params.get('window', 7)}).mean().plot(color='orange', linewidth=2, label='Rolling')\nplt.legend(); plt.tight_layout(); plt.show()"
 
 class SmallMultiplesTime(AnalysisTemplate):
     id = "small_multiples_time"
@@ -50,7 +50,7 @@ class SmallMultiplesTime(AnalysisTemplate):
     def generate_code(cls, columns: List[str], params: dict) -> str:
         d, v = _get_ts(columns, params)
         c = params.get('category', columns[2] if len(columns)>2 else 'None')
-        return f"import seaborn as sns; import matplotlib.pyplot as plt\ng = sns.FacetGrid(df, col='{c}', col_wrap=4, height=4, aspect=1.5)\ng.map_dataframe(sns.lineplot, x='{d}', y='{v}', color='teal')\nplt.show()"
+        return f"import seaborn as sns; import matplotlib.pyplot as plt\ng = sns.FacetGrid(df, col='{c}', col_wrap=4, height=4, aspect=1.5)\ng.map_dataframe(sns.lineplot, x='{d}', y='{v}', color='teal')\nplt.tight_layout(); plt.show()"
 
 class SeasonalityHeatmap(AnalysisTemplate):
     id = "seasonality_heatmap"
@@ -61,7 +61,7 @@ class SeasonalityHeatmap(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         d, v = _get_ts(columns, params)
-        return f"import seaborn as sns; import matplotlib.pyplot as plt; import pandas as pd\ndf_temp = df.copy()\ndf_temp['month'] = pd.to_datetime(df_temp['{d}']).dt.month\ndf_temp['year'] = pd.to_datetime(df_temp['{d}']).dt.year\npivot = df_temp.pivot_table(index='month', columns='year', values='{v}', aggfunc='mean')\nplt.figure(figsize=(10, 6))\nsns.heatmap(pivot, cmap='YlGnBu', annot=True, fmt='.1f')\nplt.show()"
+        return f"import seaborn as sns; import matplotlib.pyplot as plt; import pandas as pd\ndf_temp = df.copy()\ndf_temp['month'] = pd.to_datetime(df_temp['{d}']).dt.month\ndf_temp['year'] = pd.to_datetime(df_temp['{d}']).dt.year\npivot = df_temp.pivot_table(index='month', columns='year', values='{v}', aggfunc='mean')\nplt.figure(figsize=(10, 6))\nsns.heatmap(pivot, cmap='YlGnBu', annot=True, fmt='.1f')\nplt.tight_layout(); plt.show()"
 
 class PeriodCompare(AnalysisTemplate):
     id = "period_compare"
@@ -72,7 +72,7 @@ class PeriodCompare(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         d, v = _get_ts(columns, params)
-        return f"import matplotlib.pyplot as plt; import pandas as pd\ndf_temp = df.copy()\ndf_temp['year'] = pd.to_datetime(df_temp['{d}']).dt.year\ndf_temp['dayofyear'] = pd.to_datetime(df_temp['{d}']).dt.dayofyear\npivot = df_temp.pivot_table(index='dayofyear', columns='year', values='{v}', aggfunc='mean')\nplt.figure(figsize=(12, 6))\npivot.plot(ax=plt.gca(), colormap='viridis')\nplt.title('Year over Year Comparison')\nplt.show()"
+        return f"import matplotlib.pyplot as plt; import pandas as pd\ndf_temp = df.copy()\ndf_temp['year'] = pd.to_datetime(df_temp['{d}']).dt.year\ndf_temp['dayofyear'] = pd.to_datetime(df_temp['{d}']).dt.dayofyear\npivot = df_temp.pivot_table(index='dayofyear', columns='year', values='{v}', aggfunc='mean')\nplt.figure(figsize=(12, 6))\npivot.plot(ax=plt.gca(), colormap='viridis')\nplt.title('Year over Year Comparison')\nplt.tight_layout(); plt.show()"
 
 class PctChange(AnalysisTemplate):
     id = "pct_change"
@@ -83,7 +83,7 @@ class PctChange(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         d, v = _get_ts(columns, params)
-        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.set_index('{d}')['{v}'].resample('{params.get('freq', 'M')}').sum().pct_change().plot(kind='bar', color='teal')\nplt.title('Period-over-Period % Change'); plt.show()"
+        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.set_index('{d}')['{v}'].resample('{params.get('freq', 'M')}').sum().pct_change().plot(kind='bar', color='teal')\nplt.title('Period-over-Period % Change'); plt.tight_layout(); plt.show()"
 
 class CumulativeSum(AnalysisTemplate):
     id = "cumulative_sum"
@@ -94,7 +94,7 @@ class CumulativeSum(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         d, v = _get_ts(columns, params)
-        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.sort_values('{d}').set_index('{d}')['{v}'].cumsum().plot(color='teal', linewidth=2)\nplt.title('Cumulative Sum of {v}'); plt.show()"
+        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.sort_values('{d}').set_index('{d}')['{v}'].cumsum().plot(color='teal', linewidth=2)\nplt.title('Cumulative Sum of {v}'); plt.tight_layout(); plt.show()"
 
 class TimestampGaps(AnalysisTemplate):
     id = "timestamp_gaps"
@@ -117,7 +117,7 @@ class StackedAreaTime(AnalysisTemplate):
     def generate_code(cls, columns: List[str], params: dict) -> str:
         d, v = _get_ts(columns, params)
         c = params.get('category', columns[2] if len(columns)>2 else 'None')
-        return f"import matplotlib.pyplot as plt; import pandas as pd\npivot = pd.pivot_table(df, values='{v}', index='{d}', columns='{c}', aggfunc='sum')\nplt.figure(figsize=(12, 6))\npivot.plot.area(ax=plt.gca(), colormap='Set2')\nplt.show()"
+        return f"import matplotlib.pyplot as plt; import pandas as pd\npivot = pd.pivot_table(df, values='{v}', index='{d}', columns='{c}', aggfunc='sum')\nplt.figure(figsize=(12, 6))\npivot.plot.area(ax=plt.gca(), colormap='Set2')\nplt.tight_layout(); plt.show()"
 
 class StlDecompose(AnalysisTemplate):
     id = "stl_decompose"
@@ -138,7 +138,7 @@ class StlDecompose(AnalysisTemplate):
             f"if len(ts) >= {period} * 2:\n"
             f"    result = seasonal_decompose(ts, model='additive', period={period})\n"
             f"    result.plot()\n"
-            f"    plt.show()\n"
+            f"    plt.tight_layout(); plt.show()\n"
             f"else:\n"
             f"    print('Not enough data for seasonal decomposition')\n"
         )
@@ -162,7 +162,7 @@ class AcfPlot(AnalysisTemplate):
             f"    fig, ax = plt.subplots(figsize=(10, 4))\n"
             f"    plot_acf(ts, lags=min({lags}, len(ts)-1), ax=ax)\n"
             f"    plt.title(f'Autocorrelation: {{{val}}}')\n"
-            f"    plt.show()\n"
+            f"    plt.tight_layout(); plt.show()\n"
             f"else:\n"
             f"    print('No data available for ACF plot')\n"
         )

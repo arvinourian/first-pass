@@ -18,7 +18,7 @@ class GroupedBox(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         num, cat = _get_num_cat(columns, params)
-        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.boxplot(data=df, x='{cat}', y='{num}', hue='{cat}', palette='Set2', legend=False); plt.xticks(rotation=45); plt.show()"
+        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.boxplot(data=df, x='{cat}', y='{num}', hue='{cat}', palette='Set2', legend=False); plt.xticks(rotation=45, ha=\'right\'); plt.tight_layout(); plt.show()"
 
 class GroupedViolin(AnalysisTemplate):
     id = "grouped_violin"
@@ -31,7 +31,7 @@ class GroupedViolin(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         num, cat = _get_num_cat(columns, params)
-        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.violinplot(data=df, x='{cat}', y='{num}', hue='{cat}', palette='Set2', legend=False); plt.xticks(rotation=45); plt.show()"
+        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.violinplot(data=df, x='{cat}', y='{num}', hue='{cat}', palette='Set2', legend=False); plt.xticks(rotation=45, ha=\'right\'); plt.tight_layout(); plt.show()"
 
 class GroupMeanCi(AnalysisTemplate):
     id = "group_mean_ci"
@@ -44,7 +44,7 @@ class GroupMeanCi(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         num, cat = _get_num_cat(columns, params)
-        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.barplot(data=df, x='{cat}', y='{num}', hue='{cat}', palette='Set2', legend=False); plt.xticks(rotation=45); plt.show()"
+        return f"import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.barplot(data=df, x='{cat}', y='{num}', hue='{cat}', palette='Set2', legend=False); plt.xticks(rotation=45, ha=\'right\'); plt.tight_layout(); plt.show()"
 
 class StripSwarm(AnalysisTemplate):
     id = "strip_swarm"
@@ -57,7 +57,7 @@ class StripSwarm(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         num, cat = _get_num_cat(columns, params)
-        return f"import seaborn as sns; import matplotlib.pyplot as plt\nn_pts = len(df)\na_val = 0.8 if n_pts < 1000 else 0.5 if n_pts < 10000 else 0.3\ns_val = 5 if n_pts < 1000 else 3 if n_pts < 10000 else 2\nplt.figure(figsize=(10, 6))\nsns.stripplot(data=df, x='{cat}', y='{num}', hue='{cat}', palette='Set2', legend=False, alpha=a_val, size=s_val, jitter=True); plt.xticks(rotation=45); plt.show()"
+        return f"import seaborn as sns; import matplotlib.pyplot as plt\nn_pts = len(df)\na_val = 0.8 if n_pts < 1000 else 0.5 if n_pts < 10000 else 0.3\ns_val = 5 if n_pts < 1000 else 3 if n_pts < 10000 else 2\nplt.figure(figsize=(10, 6))\nsns.stripplot(data=df, x='{cat}', y='{num}', hue='{cat}', palette='Set2', legend=False, alpha=a_val, size=s_val, jitter=True); plt.xticks(rotation=45, ha=\'right\'); plt.tight_layout(); plt.show()"
 
 class GroupSummaryTable(AnalysisTemplate):
     id = "group_summary_table"

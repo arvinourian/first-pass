@@ -22,7 +22,7 @@ class FinReturns(AnalysisTemplate):
             f"fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8), sharex=True)\n"
             f"returns.plot(ax=ax1, title='Daily Returns', alpha=0.7)\n"
             f"vol.plot(ax=ax2, title=f'{window}-Period Rolling Volatility (Annualized)', color='orange')\n"
-            f"plt.show()\n"
+            f"plt.tight_layout(); plt.show()\n"
         )
 
 class CohortRetention(AnalysisTemplate):
@@ -51,7 +51,7 @@ class CohortRetention(AnalysisTemplate):
             f"plt.figure(figsize=(12, 8))\n"
             f"sns.heatmap(retention, annot=True, fmt='.0%', cmap='YlGnBu')\n"
             f"plt.title('Cohort Retention Heatmap')\n"
-            f"plt.show()\n"
+            f"plt.tight_layout(); plt.show()\n"
         )
 
 class Funnel(AnalysisTemplate):
@@ -75,7 +75,7 @@ class Funnel(AnalysisTemplate):
             f"    plt.text(bar.get_width(), bar.get_y() + bar.get_height()/2, f' {{pct:.1f}}%', va='center')\n"
             f"plt.gca().invert_yaxis()\n"
             f"plt.title('Funnel Analysis')\n"
-            f"plt.show()\n"
+            f"plt.tight_layout(); plt.show()\n"
         )
 
 class LikertDiverging(AnalysisTemplate):
@@ -99,7 +99,7 @@ class LikertDiverging(AnalysisTemplate):
             f"df_likert.div(df_likert.sum(axis=1), axis=0).plot(kind='barh', stacked=True, figsize=(10, 6), colormap='RdYlGn')\n"
             f"plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')\n"
             f"plt.title('Likert Scale Responses')\n"
-            f"plt.show()\n"
+            f"plt.tight_layout(); plt.show()\n"
         )
 
 class RfmTable(AnalysisTemplate):

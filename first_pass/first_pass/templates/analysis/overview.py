@@ -34,7 +34,7 @@ class MissingBar(AnalysisTemplate):
         
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
-        return "import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nmissing = df.isnull().sum()\nmissing[missing > 0].plot.bar(color='tomato')\nplt.title('Missing Values Count'); plt.xticks(rotation=45); plt.show()"
+        return "import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nmissing = df.isnull().sum()\nmissing[missing > 0].plot.bar(color='tomato')\nplt.title('Missing Values Count'); plt.xticks(rotation=45, ha=\'right\'); plt.tight_layout(); plt.show()"
 
 class MissingMatrix(AnalysisTemplate):
     id = "missing_matrix"
@@ -46,7 +46,7 @@ class MissingMatrix(AnalysisTemplate):
         
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
-        return "import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.heatmap(df.isnull(), cbar=False, cmap='viridis')\nplt.title('Missing Values Matrix'); plt.show()"
+        return "import seaborn as sns; import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\nsns.heatmap(df.isnull(), cbar=False, cmap='viridis')\nplt.title('Missing Values Matrix'); plt.tight_layout(); plt.show()"
 
 class DuplicateSummary(AnalysisTemplate):
     id = "duplicate_summary"
@@ -68,7 +68,7 @@ class CardinalityBar(AnalysisTemplate):
         
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
-        return "import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\ndf.select_dtypes(include=['object', 'category']).nunique().plot.bar(color='teal')\nplt.title('Cardinality (Unique Values) per Categorical Column'); plt.xticks(rotation=45); plt.show()"
+        return "import matplotlib.pyplot as plt\nplt.figure(figsize=(10, 6))\ndf.select_dtypes(include=['object', 'category']).nunique().plot.bar(color='teal')\nplt.title('Cardinality (Unique Values) per Categorical Column'); plt.xticks(rotation=45, ha=\'right\'); plt.tight_layout(); plt.show()"
 
 class OutlierFlags(AnalysisTemplate):
     id = "outlier_flags"
