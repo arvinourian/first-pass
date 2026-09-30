@@ -40,7 +40,7 @@ class RegionAgg(AnalysisTemplate):
             f"agg_df = df.groupby({repr(region)})[{repr(val)}].agg({repr(agg)}).sort_values(ascending=False).head(20)\n"
             f"plt.figure(figsize=(10, 8))\n"
             f"sns.barplot(x=agg_df.values, y=agg_df.index, hue=agg_df.index, palette='viridis', legend=False)\n"
-            f"plt.title(f'Top 20 Regions by {agg.capitalize()} of {{{val}}}')\n"
+            f"plt.title(f'Top 20 Regions by {agg.capitalize()} of {val}')\n"
             f"plt.tight_layout(); plt.show()\n"
         )
 

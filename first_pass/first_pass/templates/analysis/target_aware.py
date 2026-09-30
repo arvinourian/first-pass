@@ -16,7 +16,7 @@ class TargetDistribution(AnalysisTemplate):
             f"import matplotlib.pyplot as plt\n"
             f"plt.figure(figsize=(8, 5))\n"
             f"sns.histplot(data=df, x={repr(target)}, kde=True) if df[{repr(target)}].dtype.kind in 'bifc' else sns.countplot(data=df, x={repr(target)})\n"
-            f"plt.title(f'Target Distribution: {{{target}}}')\n"
+            f"plt.title(f'Target Distribution: {target}')\n"
             f"plt.tight_layout(); plt.show()"
         )
 
@@ -39,7 +39,7 @@ class TargetCorrRanked(AnalysisTemplate):
             f"    corrs = num_df.corr()[{repr(target)}].drop({repr(target)}).sort_values(key=abs, ascending=False).head({top_k})\n"
             f"    plt.figure(figsize=(10, 6))\n"
             f"    sns.barplot(x=corrs.values, y=corrs.index, hue=corrs.index, palette='coolwarm', legend=False)\n"
-            f"    plt.title(f'Top {{min({top_k}, len(corrs))}} Correlations with {{{target}}}')\n"
+            f"    plt.title(f'Top {{min({top_k}, len(corrs))}} Correlations with {target}')\n"
             f"    plt.tight_layout(); plt.show()\n"
         )
 
@@ -66,7 +66,7 @@ class MutualInfoRanked(AnalysisTemplate):
             f"    mi_series = pd.Series(mi, index=num_cols).sort_values(ascending=False).head({top_k})\n"
             f"    plt.figure(figsize=(10, 6))\n"
             f"    sns.barplot(x=mi_series.values, y=mi_series.index, hue=mi_series.index, palette='viridis', legend=False)\n"
-            f"    plt.title(f'Top Mutual Information with {{{target}}}')\n"
+            f"    plt.title(f'Top Mutual Information with {target}')\n"
             f"    plt.tight_layout(); plt.show()\n"
         )
 
@@ -86,6 +86,6 @@ class TargetRateByCat(AnalysisTemplate):
             f"rate = df.groupby({repr(cat)})[{repr(target)}].mean().sort_values(ascending=False)\n"
             f"plt.figure(figsize=(10, 6))\n"
             f"sns.barplot(x=rate.values, y=rate.index, hue=rate.index, palette='mako', legend=False)\n"
-            f"plt.title(f'Mean {{{target}}} by {{{cat}}}')\n"
+            f"plt.title(f'Mean {target} by {cat}')\n"
             f"plt.tight_layout(); plt.show()\n"
         )

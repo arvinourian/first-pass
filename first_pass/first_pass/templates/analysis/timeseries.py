@@ -161,7 +161,7 @@ class AcfPlot(AnalysisTemplate):
             f"if len(ts) > 0:\n"
             f"    fig, ax = plt.subplots(figsize=(10, 4))\n"
             f"    plot_acf(ts, lags=min({lags}, len(ts)-1), ax=ax)\n"
-            f"    plt.title(f'Autocorrelation: {{{val}}}')\n"
+            f"    plt.title(f'Autocorrelation: {val}')\n"
             f"    plt.tight_layout(); plt.show()\n"
             f"else:\n"
             f"    print('No data available for ACF plot')\n"

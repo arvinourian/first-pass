@@ -121,6 +121,6 @@ class QqPlot(AnalysisTemplate):
             f"import scipy.stats as stats\n"
             f"plt.figure(figsize=(8, 6))\n"
             f"stats.probplot(df['{col}'].dropna(), dist='norm', plot=plt)\n"
-            f"plt.title(f'Q-Q Plot: {{{col}}}')\n"
+            f"plt.title(f'Q-Q Plot: {col}')\n"
             f"plt.tight_layout(); plt.show()"
         )
