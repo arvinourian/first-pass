@@ -27,7 +27,7 @@ class ResampleAgg(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         d, v = _get_ts(columns, params)
-        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.set_index(pd.to_datetime(df['{d}']))['{v}'].resample('{params.get('freq', 'D')}').{params.get('agg', 'sum')}().plot(color='teal', linewidth=2)\nplt.title('Resampled {v}'); plt.tight_layout(); plt.show()"
+        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.set_index(pd.to_datetime(df['{d}']))['{v}'].resample('ME' if params.get('freq', 'D') == 'M' else params.get('freq', 'D')).{params.get('agg', 'sum')}().plot(color='teal', linewidth=2)\nplt.title('Resampled {v}'); plt.tight_layout(); plt.show()"
 
 class RollingMean(AnalysisTemplate):
     id = "rolling_mean"
@@ -83,7 +83,7 @@ class PctChange(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         d, v = _get_ts(columns, params)
-        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.set_index(pd.to_datetime(df['{d}']))['{v}'].resample('{params.get('freq', 'M')}').sum().pct_change().plot(kind='bar', color='teal')\nplt.title('Period-over-Period % Change'); plt.tight_layout(); plt.show()"
+        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.set_index(pd.to_datetime(df['{d}']))['{v}'].resample('ME' if params.get('freq', 'ME') == 'M' else params.get('freq', 'ME')).sum().pct_change().plot(kind='bar', color='teal')\nplt.title('Period-over-Period % Change'); plt.tight_layout(); plt.show()"
 
 class CumulativeSum(AnalysisTemplate):
     id = "cumulative_sum"

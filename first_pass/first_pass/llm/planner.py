@@ -43,7 +43,7 @@ Planner selection rules:
 2. Group your analyses into logical, thematic `sections` (e.g. "Data Overview", "Target Distribution", "Geographic Trends"). This provides a narrative flow.
 3. Be EXHAUSTIVE and COMPREHENSIVE in your exploration, but PRUNE redundant charts. Do not pick 5 simple bar charts; use `multi_bar` instead.
 4. Utilize advanced tools like `ols_regression`, `scatter_regression`, and `target_corr_ranked` if there is a clear target variable.
-5. FEATURE ENGINEERING: Use the `custom_code` template to write free-form pandas code (e.g., calculating ratios, mapping categories, creating derived metrics) at the beginning of a section before visualizing them. Assume `df`, `pd`, `sns`, `plt` are loaded.
+5. ADVANCED DOMAIN MODELING: You are a senior data scientist. If standard templates are not enough to explore a domain-specific hypothesis (e.g., Sales-Ratio studies for Real Estate, Baseline ML Models, Repeat-Purchase patterns), use the `custom_code` template to write highly complex, free-form Pandas/Scikit-Learn/Statsmodels code to execute the analysis and print the results!
 6. If there are interesting avenues for future investigation that are beyond the scope of these templates, list them in the `further_analyses` field.
 7. DATA LEAKAGE & REDUNDANCY: Recognize mathematically equivalent or derived features (e.g. 'price' and 'log_price', 'age' and 'birth_year'). NEVER correlate or analyze them against each other, as the relationship is mathematically trivial. Pick the single best representation of the variable for your predictive analysis and omit the redundant ones.
 8. Never select a template whose "Applies when" preconditions are not met.
@@ -91,12 +91,12 @@ Planner selection rules:
         return plan
     
     try:
-        response_text = generate_plan("pass2", prompt, AnalysisPlan)
+        response_text = generate_plan("pass3", prompt, AnalysisPlan)
         plan = AnalysisPlan.model_validate_json(response_text)
         return _validate(plan)
     except Exception as e:
         repair_prompt = prompt + f"\n\nYour previous attempt failed with error: {e}. Please fix the JSON and try again."
-        response_text = generate_plan("pass2-repair", repair_prompt, AnalysisPlan)
+        response_text = generate_plan("pass3-repair", repair_prompt, AnalysisPlan)
         plan = AnalysisPlan.model_validate_json(response_text)
         return _validate(plan)
 
@@ -113,11 +113,11 @@ def plan_engineering(profile: DataProfile, playbooks: List[Playbook], user_text:
     prompt = sys_prompt + "\n\n" + context
     
     try:
-        response_text = generate_plan("pass1.5", prompt, CleaningPlan)
+        response_text = generate_plan("pass2", prompt, CleaningPlan)
         plan = CleaningPlan.model_validate_json(response_text)
         return plan
     except Exception as e:
         repair_prompt = prompt + f"\n\nYour previous attempt failed with error: {e}. Please fix the JSON and try again."
-        response_text = generate_plan("pass1.5-repair", repair_prompt, CleaningPlan)
+        response_text = generate_plan("pass2-repair", repair_prompt, CleaningPlan)
         plan = CleaningPlan.model_validate_json(response_text)
         return plan

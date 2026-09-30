@@ -8,9 +8,9 @@ def load_spreadsheet(filepath: str) -> pd.DataFrame:
     ext = os.path.splitext(filepath)[1].lower()
     
     if ext == '.csv':
-        df_raw = pd.read_csv(filepath, header=None, nrows=50, on_bad_lines='skip')
+        df_raw = pd.read_csv(filepath, header=None, nrows=50, on_bad_lines='skip', low_memory=False)
         header_idx = _find_header_row(df_raw)
-        df = pd.read_csv(filepath, header=header_idx, on_bad_lines='skip')
+        df = pd.read_csv(filepath, header=header_idx, on_bad_lines='skip', low_memory=False)
     elif ext in ['.xls', '.xlsx']:
         df_raw = pd.read_excel(filepath, header=None, nrows=50)
         header_idx = _find_header_row(df_raw)

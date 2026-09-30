@@ -96,7 +96,7 @@ def generate_plan(stage: str, prompt: str, schema: Any, model: str = "gemini-3.8
     
     return response.text
 
-def get_embedding(text: str, model: str = "gemini-embedding-2-preview") -> List[float]:
+def get_embedding(text: str, model: str = "gemini-embedding-2-preview", stage: str = "embedding") -> List[float]:
     client = get_client()
     
     start_time = time.time()
@@ -122,7 +122,7 @@ def get_embedding(text: str, model: str = "gemini-embedding-2-preview") -> List[
     latency = int((time.time() - start_time) * 1000)
     
     track_usage(
-        stage="embedding",
+        stage=stage,
         model=model,
         input_tokens=tokens,
         output_tokens=0,

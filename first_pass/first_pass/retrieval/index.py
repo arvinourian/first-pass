@@ -59,7 +59,7 @@ class PlaybookIndex:
         # FAISS
         embeddings = []
         for pb in self.playbooks:
-            emb = get_embedding(pb.get_search_text())
+            emb = get_embedding(pb.get_search_text(), stage="indexing")
             embeddings.append(emb)
             
         emb_matrix = np.array(embeddings, dtype='float32')
@@ -69,7 +69,7 @@ class PlaybookIndex:
         self.faiss_index = faiss.IndexFlatIP(dim)
         self.faiss_index.add(emb_matrix)
         
-    def hybrid_search(self, query: str, category: str, top_k: int = 4) -> List[Playbook]:
+    def hybrid_search(self, query: str, category: str, top_k: int = 4, stage: str = "embedding") -> List[Playbook]:
         if not self.playbooks:
             return []
             
@@ -80,7 +80,7 @@ class PlaybookIndex:
         tokenized_query = query.lower().split()
         bm25_scores = self.bm25.get_scores(tokenized_query)
         
-        q_emb = get_embedding(query)
+        q_emb = get_embedding(query, stage=stage)
         q_emb_matrix = np.array([q_emb], dtype='float32')
         faiss.normalize_L2(q_emb_matrix)
         

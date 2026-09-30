@@ -50,9 +50,9 @@ if uploaded_file is not None:
         with col_t1:
             enable_domain = st.checkbox("Enable Domain Context (Pass 0)", value=True, help="Injects industry KPIs before planning.")
         with col_t2:
-            enable_engineering = st.checkbox("Enable Feature Engineering (Pass 1.5)", value=True, help="Mathematically transforms data before analysis.")
+            enable_engineering = st.checkbox("Enable Feature Engineering (Pass 2)", value=True, help="Mathematically transforms data before analysis.")
         with col_t3:
-            enable_synthesis = st.checkbox("Enable Executive Synthesis (Pass 3)", value=True, help="Writes a human-readable business report of the findings.")
+            enable_synthesis = st.checkbox("Enable Executive Synthesis (Pass 4)", value=True, help="Writes a human-readable business report of the findings.")
         
     st.markdown("<br>", unsafe_allow_html=True)
     col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
@@ -109,7 +109,7 @@ if uploaded_file is not None:
             if enable_domain:
                 my_bar.progress(15, text="Stage 2.5: RAG Pass 0 (Domain Context)...")
                 domain_query = f"domain industry {raw_profile.row_count} rows " + " ".join([c.name for c in raw_profile.columns]) + combined_instructions
-                domain_pbs = idx.hybrid_search(domain_query, "domain", top_k=1)
+                domain_pbs = idx.hybrid_search(domain_query, "domain", top_k=1, stage="pass0")
                 if domain_pbs:
                     combined_instructions += f"\n\n--- Recommended Industry Best Practices ---\n{domain_pbs[0].content}"
 
@@ -128,14 +128,14 @@ if uploaded_file is not None:
             
             engineering_plan = None
             if enable_engineering:
-                my_bar.progress(60, text="Stage 4.5: RAG Pass 1.5 (Feature Engineering Plan)...")
+                my_bar.progress(60, text="Stage 4.5: RAG Pass 2 (Feature Engineering Plan)...")
                 query_e = f"engineering scaling datetime binning pca. " + combined_instructions
-                engineering_pbs = idx.hybrid_search(query_e, "engineering")
+                engineering_pbs = idx.hybrid_search(query_e, "engineering", stage="pass2")
                 if not engineering_pbs and idx.playbooks:
                     engineering_pbs = [pb for pb in idx.playbooks if pb.category == 'engineering'][:4]
                 engineering_plan = plan_engineering(cleaned_profile, engineering_pbs, combined_instructions)
             
-            my_bar.progress(70, text="Stage 5: RAG Pass 2 (Analysis Plan)...")
+            my_bar.progress(70, text="Stage 5: RAG Pass 3 (Analysis Plan)...")
             
             query_a = f"analysis distribution categories correlations trends. " + combined_instructions
             analysis_pbs = idx.hybrid_search(query_a, "analysis", top_k=15)
@@ -199,7 +199,7 @@ if uploaded_file is not None:
             
             synthesis_path = None
             if enable_synthesis:
-                my_bar.progress(95, text="Stage 7: RAG Pass 3 (Executive Synthesis)...")
+                my_bar.progress(95, text="Stage 7: RAG Pass 4 (Executive Synthesis)...")
                 from first_pass.llm.synthesis import synthesize_report
                 report_md = synthesize_report(executed_nb_path, combined_instructions)
                 synthesis_path = os.path.join("temp", f"{base_name}_Executive_Summary.md")
