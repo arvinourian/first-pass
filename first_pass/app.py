@@ -69,7 +69,9 @@ if uploaded_file is not None:
             combined_instructions += f"\n\n--- Context Document ({context_file.name}) ---\n{context_text}"
             
         from datetime import datetime
+        import time
         run_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        start_time = time.time()
         start_log_idx = len(llm_usage_logs)
             
         progress_placeholder = st.empty()
@@ -174,6 +176,7 @@ if uploaded_file is not None:
             st.session_state['parquet_path'] = parquet_path
             st.session_state['llm_logs'] = llm_usage_logs.copy()
             st.session_state['last_file'] = uploaded_file.name
+            st.session_state['run_duration'] = time.time() - start_time
             
         except Exception as e:
             st.error(f"An error occurred: {e}")
@@ -252,6 +255,8 @@ if uploaded_file is not None:
                     df_usage = df_usage[cols]
                 st.dataframe(df_usage, use_container_width=True)
                 st.write(f"**Total Run Cost:** ${df_usage['cost'].sum():.6f}")
+                if 'run_duration' in st.session_state:
+                    st.write(f"**Total Run Duration:** {st.session_state['run_duration']:.1f} seconds")
             else:
                 st.write("No LLM calls logged.")
 
