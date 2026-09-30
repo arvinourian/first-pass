@@ -16,7 +16,7 @@ class LineTime(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         d, v = _get_ts(columns, params)
-        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.groupby('{d}')['{v}'].{params.get('agg', 'sum')}().plot(kind='line', color='teal', linewidth=2)\nplt.title('{v} over time'); plt.tight_layout(); plt.show()"
+        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.groupby(pd.to_datetime(df['{d}']))['{v}'].{params.get('agg', 'sum')}().plot(kind='line', color='teal', linewidth=2)\nplt.title('{v} over time'); plt.tight_layout(); plt.show()"
 
 class ResampleAgg(AnalysisTemplate):
     id = "resample_agg"
@@ -27,7 +27,7 @@ class ResampleAgg(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         d, v = _get_ts(columns, params)
-        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.set_index('{d}')['{v}'].resample('{params.get('freq', 'D')}').{params.get('agg', 'sum')}().plot(color='teal', linewidth=2)\nplt.title('Resampled {v}'); plt.tight_layout(); plt.show()"
+        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.set_index(pd.to_datetime(df['{d}']))['{v}'].resample('{params.get('freq', 'D')}').{params.get('agg', 'sum')}().plot(color='teal', linewidth=2)\nplt.title('Resampled {v}'); plt.tight_layout(); plt.show()"
 
 class RollingMean(AnalysisTemplate):
     id = "rolling_mean"
@@ -38,7 +38,7 @@ class RollingMean(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         d, v = _get_ts(columns, params)
-        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\nts = df.set_index('{d}')['{v}'].sort_index()\nts.plot(alpha=0.4, color='gray', label='Raw')\nts.rolling(window={params.get('window', 7)}).mean().plot(color='orange', linewidth=2, label='Rolling')\nplt.legend(); plt.tight_layout(); plt.show()"
+        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\nts = df.set_index(pd.to_datetime(df['{d}']))['{v}'].sort_index()\nts.plot(alpha=0.4, color='gray', label='Raw')\nts.rolling(window={params.get('window', 7)}).mean().plot(color='orange', linewidth=2, label='Rolling')\nplt.legend(); plt.tight_layout(); plt.show()"
 
 class SmallMultiplesTime(AnalysisTemplate):
     id = "small_multiples_time"
@@ -83,7 +83,7 @@ class PctChange(AnalysisTemplate):
     @classmethod
     def generate_code(cls, columns: List[str], params: dict) -> str:
         d, v = _get_ts(columns, params)
-        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.set_index('{d}')['{v}'].resample('{params.get('freq', 'M')}').sum().pct_change().plot(kind='bar', color='teal')\nplt.title('Period-over-Period % Change'); plt.tight_layout(); plt.show()"
+        return f"import matplotlib.pyplot as plt\nplt.figure(figsize=(12, 6))\ndf.set_index(pd.to_datetime(df['{d}']))['{v}'].resample('{params.get('freq', 'M')}').sum().pct_change().plot(kind='bar', color='teal')\nplt.title('Period-over-Period % Change'); plt.tight_layout(); plt.show()"
 
 class CumulativeSum(AnalysisTemplate):
     id = "cumulative_sum"
@@ -134,7 +134,7 @@ class StlDecompose(AnalysisTemplate):
             f"import matplotlib.pyplot as plt\n"
             f"import pandas as pd\n"
             f"from statsmodels.tsa.seasonal import seasonal_decompose\n"
-            f"ts = df.set_index({repr(date)})[{repr(val)}].dropna().sort_index()\n"
+            f"ts = df.set_index(pd.to_datetime(df[{repr(date)}]))[{repr(val)}].dropna().sort_index()\n"
             f"if len(ts) >= {period} * 2:\n"
             f"    result = seasonal_decompose(ts, model='additive', period={period})\n"
             f"    result.plot()\n"
@@ -157,7 +157,7 @@ class AcfPlot(AnalysisTemplate):
         return (
             f"import matplotlib.pyplot as plt\n"
             f"from statsmodels.graphics.tsaplots import plot_acf\n"
-            f"ts = df.set_index({repr(date)})[{repr(val)}].dropna().sort_index()\n"
+            f"ts = df.set_index(pd.to_datetime(df[{repr(date)}]))[{repr(val)}].dropna().sort_index()\n"
             f"if len(ts) > 0:\n"
             f"    fig, ax = plt.subplots(figsize=(10, 4))\n"
             f"    plot_acf(ts, lags=min({lags}, len(ts)-1), ax=ax)\n"

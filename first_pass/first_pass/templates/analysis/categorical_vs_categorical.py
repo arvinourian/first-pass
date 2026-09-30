@@ -20,7 +20,10 @@ class CrosstabTable(AnalysisTemplate):
     def generate_code(cls, columns: List[str], params: dict) -> str:
         row, col = _get_cats(columns, params)
         norm = params.get('normalize', False)
-        return f"display(pd.crosstab(df['{row}'], df['{col}'], normalize={norm}))"
+        if isinstance(norm, str):
+            if norm.lower() == 'false': norm = False
+            elif norm.lower() == 'true': norm = True
+        return f"display(pd.crosstab(df['{row}'], df['{col}'], normalize={repr(norm)}))"
 
 class CrosstabHeatmap(AnalysisTemplate):
     id = "crosstab_heatmap"
