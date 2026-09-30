@@ -45,8 +45,9 @@ Planner selection rules:
 4. Utilize advanced tools like `ols_regression`, `scatter_regression`, and `target_corr_ranked` if there is a clear target variable.
 5. FEATURE ENGINEERING: Use the `custom_code` template to write free-form pandas code (e.g., calculating ratios, mapping categories, creating derived metrics) at the beginning of a section before visualizing them. Assume `df`, `pd`, `sns`, `plt` are loaded.
 6. If there are interesting avenues for future investigation that are beyond the scope of these templates, list them in the `further_analyses` field.
-7. Never select a template whose "Applies when" preconditions are not met.
-8. Every plan item must include `template_id`, `columns`, `params`, `rationale` (one sentence), and `playbook_ids`.
+7. DATA LEAKAGE & REDUNDANCY: Recognize mathematically equivalent or derived features (e.g. 'price' and 'log_price', 'age' and 'birth_year'). NEVER correlate or analyze them against each other, as the relationship is mathematically trivial. Pick the single best representation of the variable for your predictive analysis and omit the redundant ones.
+8. Never select a template whose "Applies when" preconditions are not met.
+9. Every plan item must include `template_id`, `columns`, `params`, `rationale` (one sentence), and `playbook_ids`.
 """
     
     context = f"Cleaned Data Profile:\n{profile.model_dump_json(exclude_none=True)}\n\n"
@@ -98,3 +99,25 @@ Planner selection rules:
         response_text = generate_plan("pass2-repair", repair_prompt, AnalysisPlan)
         plan = AnalysisPlan.model_validate_json(response_text)
         return _validate(plan)
+
+from first_pass.schemas import CleaningPlan
+
+def plan_engineering(profile: DataProfile, playbooks: List[Playbook], user_text: str = "") -> CleaningPlan:
+    sys_prompt = "You are a data engineering AI. Your job is to output a structured JSON plan to engineer new features mathematically (scaling, binning, datetime extraction). Only use templates specified in the playbooks. For the `params` field, output a valid JSON string representing the parameter dictionary (e.g. \"{\\\"column\\\": \\\"date\\\"}\")."
+    
+    context = f"Data Profile:\n{profile.model_dump_json(exclude_none=True)}\n\n"
+    if user_text:
+        context += f"User Instructions:\n{user_text}\n\n"
+    context += f"Available Playbooks:\n{format_playbooks(playbooks)}\n"
+    
+    prompt = sys_prompt + "\n\n" + context
+    
+    try:
+        response_text = generate_plan("pass1.5", prompt, CleaningPlan)
+        plan = CleaningPlan.model_validate_json(response_text)
+        return plan
+    except Exception as e:
+        repair_prompt = prompt + f"\n\nYour previous attempt failed with error: {e}. Please fix the JSON and try again."
+        response_text = generate_plan("pass1.5-repair", repair_prompt, CleaningPlan)
+        plan = CleaningPlan.model_validate_json(response_text)
+        return plan

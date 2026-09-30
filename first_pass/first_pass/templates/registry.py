@@ -11,12 +11,25 @@ _ANALYSIS_TEMPLATES: Dict[str, Type[AnalysisTemplate]] = {}
 def _load_templates():
     if _ANALYSIS_TEMPLATES: return
     import first_pass.templates.analysis as analysis_pkg
+    try:
+        import first_pass.templates.engineering as engineering_pkg
+    except ImportError:
+        engineering_pkg = None
+
     for _, module_name, _ in pkgutil.iter_modules(analysis_pkg.__path__):
         mod = importlib.import_module(f"first_pass.templates.analysis.{module_name}")
         for name, obj in inspect.getmembers(mod, inspect.isclass):
             if issubclass(obj, AnalysisTemplate) and obj is not AnalysisTemplate:
                 if getattr(obj, "id", ""):
                     _ANALYSIS_TEMPLATES[obj.id] = obj
+                    
+    if engineering_pkg:
+        for _, module_name, _ in pkgutil.iter_modules(engineering_pkg.__path__):
+            mod = importlib.import_module(f"first_pass.templates.engineering.{module_name}")
+            for name, obj in inspect.getmembers(mod, inspect.isclass):
+                if issubclass(obj, AnalysisTemplate) and obj is not AnalysisTemplate:
+                    if getattr(obj, "id", ""):
+                        _ANALYSIS_TEMPLATES[obj.id] = obj
 
 def get_template(template_id: str) -> Type[AnalysisTemplate]:
     _load_templates()
@@ -48,7 +61,7 @@ def get_template_code(category: str, template_id: str, columns: list, params: di
                 f"    df[col] = pd.to_datetime(df[col], errors='coerce')"
             )
             
-    elif category == 'analysis':
+    elif category in ('analysis', 'engineering'):
         _load_templates()
         if template_id in _ANALYSIS_TEMPLATES:
             return _ANALYSIS_TEMPLATES[template_id].generate_code(columns, params)

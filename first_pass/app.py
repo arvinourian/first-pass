@@ -7,7 +7,7 @@ import traceback
 from first_pass.ingest import load_spreadsheet
 from first_pass.profile import generate_profile, profile_to_json
 from first_pass.retrieval.index import PlaybookIndex
-from first_pass.llm.planner import plan_cleaning, plan_analysis
+from first_pass.llm.planner import plan_cleaning, plan_engineering, plan_analysis
 from first_pass.llm.client import llm_usage_logs
 from first_pass.notebook_builder import NotebookBuilder
 from first_pass.export import export_to_html, export_to_py, export_to_docx, export_to_pdf
@@ -43,6 +43,18 @@ if uploaded_file is not None:
     with open(temp_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
         
+    st.markdown("<br>", unsafe_allow_html=True)
+    with st.expander("⚙️ Advanced AI RAG Passes (Optional)", expanded=False):
+        st.write("Enable additional AI reasoning passes to enhance the output quality.")
+        col_t1, col_t2, col_t3 = st.columns(3)
+        with col_t1:
+            enable_domain = st.checkbox("Enable Domain Context (Pass 0)", value=True, help="Injects industry KPIs before planning.")
+        with col_t2:
+            enable_engineering = st.checkbox("Enable Feature Engineering (Pass 1.5)", value=True, help="Mathematically transforms data before analysis.")
+        with col_t3:
+            enable_synthesis = st.checkbox("Enable Executive Synthesis (Pass 3)", value=True, help="Writes a human-readable business report of the findings.")
+        
+    st.markdown("<br>", unsafe_allow_html=True)
     col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
     with col_btn2:
         run_btn = st.button("✨ Run First Pass", type="primary", use_container_width=True)
@@ -89,10 +101,18 @@ if uploaded_file is not None:
             @st.cache_resource
             def get_index():
                 index = PlaybookIndex()
-                index.build(["playbooks/cleaning", "playbooks/analysis"])
+                index.build(["playbooks/cleaning", "playbooks/engineering", "playbooks/analysis", "playbooks/domain"])
                 return index
             
             idx = get_index()
+            
+            if enable_domain:
+                my_bar.progress(15, text="Stage 2.5: RAG Pass 0 (Domain Context)...")
+                domain_query = f"domain industry {raw_profile.row_count} rows " + " ".join([c.name for c in raw_profile.columns]) + combined_instructions
+                domain_pbs = idx.hybrid_search(domain_query, "domain", top_k=1)
+                if domain_pbs:
+                    combined_instructions += f"\n\n--- Recommended Industry Best Practices ---\n{domain_pbs[0].content}"
+
             
             my_bar.progress(30, text="Stage 3: RAG Pass 1 (Cleaning Plan)...")
             
@@ -105,6 +125,15 @@ if uploaded_file is not None:
             
             my_bar.progress(50, text="Stage 4: Executing Cleaning (No LLM)...")
             cleaned_profile = raw_profile 
+            
+            engineering_plan = None
+            if enable_engineering:
+                my_bar.progress(60, text="Stage 4.5: RAG Pass 1.5 (Feature Engineering Plan)...")
+                query_e = f"engineering scaling datetime binning pca. " + combined_instructions
+                engineering_pbs = idx.hybrid_search(query_e, "engineering")
+                if not engineering_pbs and idx.playbooks:
+                    engineering_pbs = [pb for pb in idx.playbooks if pb.category == 'engineering'][:4]
+                engineering_plan = plan_engineering(cleaned_profile, engineering_pbs, combined_instructions)
             
             my_bar.progress(70, text="Stage 5: RAG Pass 2 (Analysis Plan)...")
             
@@ -136,6 +165,7 @@ if uploaded_file is not None:
             builder.build_notebook(
                 raw_profile=raw_profile,
                 cleaning_plan=cleaning_plan,
+                engineering_plan=engineering_plan,
                 cleaned_profile=cleaned_profile,
                 analysis_plan=analysis_plan,
                 llm_usage=llm_usage_logs,
@@ -166,7 +196,18 @@ if uploaded_file is not None:
                 llm_usage_logs[i]['file'] = uploaded_file.name
                 llm_usage_logs[i]['timestamp'] = run_timestamp
             
+            
+            synthesis_path = None
+            if enable_synthesis:
+                my_bar.progress(95, text="Stage 7: RAG Pass 3 (Executive Synthesis)...")
+                from first_pass.llm.synthesis import synthesize_report
+                report_md = synthesize_report(executed_nb_path, combined_instructions)
+                synthesis_path = os.path.join("temp", f"{base_name}_Executive_Summary.md")
+                with open(synthesis_path, 'w', encoding='utf-8') as sf:
+                    sf.write(report_md)
+            
             # Save results in session state
+            st.session_state['synthesis_path'] = synthesis_path
             st.session_state['run_complete'] = True
             st.session_state['executed_nb_path'] = executed_nb_path
             st.session_state['html_path'] = html_path
