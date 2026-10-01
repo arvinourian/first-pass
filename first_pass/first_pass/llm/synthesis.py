@@ -16,9 +16,13 @@ def generate_key_takeaways(notebook_path: str, user_text: str = "") -> str:
         elif cell['cell_type'] == 'code':
             for out in cell.get('outputs', []):
                 if out.get('output_type') == 'execute_result' and 'text/plain' in out.get('data', {}):
-                    text_content += out['data']['text/plain'] + "\n"
+                    p = out['data']['text/plain']
+                    if isinstance(p, list): p = ''.join(p)
+                    text_content += p + "\n"
                 elif out.get('output_type') == 'stream':
-                    text_content += out.get('text', '') + "\n"
+                    t = out.get('text', '')
+                    if isinstance(t, list): t = ''.join(t)
+                    text_content += t + "\n"
                     
     # Truncate if too huge
     if len(text_content) > 100000:
