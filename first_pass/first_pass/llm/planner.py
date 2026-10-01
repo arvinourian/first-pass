@@ -1,5 +1,6 @@
 import json
 from typing import List
+from pydantic import BaseModel
 from first_pass.schemas import DataProfile, CleaningPlan, AnalysisPlan
 from first_pass.llm.client import generate_plan
 from first_pass.retrieval.index import Playbook
@@ -119,6 +120,7 @@ Planner selection rules:
         plan = AnalysisPlan.model_validate_json(response_text)
         return _validate(plan)
 
+from pydantic import BaseModel
 from first_pass.schemas import CleaningPlan
 
 def plan_engineering(profile: DataProfile, playbooks: List[Playbook], user_text: str = "") -> CleaningPlan:
