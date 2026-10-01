@@ -25,6 +25,9 @@ def generate_patches(cells: List[dict], user_text: str = "") -> ObserverResponse
             if out.get('output_type') == 'error':
                 has_error = True
                 error_text += f"{out.get('ename')}: {out.get('evalue')}\n"
+            elif out.get('output_type') == 'stream' and 'Error executing' in out.get('text', ''):
+                has_error = True
+                error_text += out.get('text', '')
             elif out.get('output_type') == 'display_data' and 'image/png' in out.get('data', {}):
                 has_image = True
                 
