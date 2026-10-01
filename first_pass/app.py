@@ -105,7 +105,11 @@ if uploaded_file is not None:
                 index.build(["playbooks/cleaning", "playbooks/engineering", "playbooks/analysis", "playbooks/domain"])
                 return index
             
-            idx = get_index()
+            try:
+                idx = get_index()
+            except Exception as e:
+                st.error(f"**API Error during Initialization:**\n{e}\n\nPlease check your Gemini API key billing and credits.")
+                st.stop()
             
             if enable_domain:
                 my_bar.progress(15, text="Stage 2.5: RAG Pass 0 (Domain Context)...")
