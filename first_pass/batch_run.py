@@ -86,7 +86,7 @@ for item in datasets:
     
     static_analyses = [
         AnalysisItem(title="Column Overview", template_id="column_overview", columns=[], rationale="Overview of column types and missing values.", playbook_ids=[]),
-        AnalysisItem(template_id="summary_stats", columns=[], rationale="High-level summary statistics of all columns.", playbook_ids=[])
+        AnalysisItem(title="Summary Statistics", template_id="summary_stats", columns=[], rationale="High-level summary statistics of all columns.", playbook_ids=[])
     ]
     static_section = AnalysisSection(
         title="Data Overview",
