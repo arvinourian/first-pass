@@ -51,6 +51,8 @@ if uploaded_file is not None:
             enable_domain = st.checkbox("Enable Domain Context (Pass 0)", value=True, help="Injects industry KPIs before planning.")
         with col_t2:
             enable_engineering = st.checkbox("Enable Feature Engineering (Pass 2)", value=True, help="Mathematically transforms data before analysis.")
+        with col_t3:
+            enable_observer = st.checkbox("Enable Multimodal Observer (Pass 4)", value=True, help="Iteratively patches syntax errors and visual chart layouts using a multimodal vision model.")
 
         
     st.markdown("<br>", unsafe_allow_html=True)
@@ -175,7 +177,7 @@ if uploaded_file is not None:
             
             my_bar.progress(90, text="Executing Notebook...")
             executed_nb_path = os.path.join("temp", f"{os.path.splitext(uploaded_file.name)[0]}_FirstPass_Executed.ipynb")
-            builder.execute_notebook(nb_path, executed_nb_path)
+            builder.execute_notebook(nb_path, executed_nb_path, enable_observer=enable_observer)
             
             my_bar.progress(95, text="Exporting to HTML format...")
             html_path = export_to_html(executed_nb_path, "temp")

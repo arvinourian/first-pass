@@ -64,7 +64,7 @@ try:
         output_path=nb_path
     )
     
-    builder.execute_notebook(nb_path, executed_nb_path)
+    builder.execute_notebook(nb_path, executed_nb_path, enable_observer=True)
     
     print("  Checking for errors...")
     import json

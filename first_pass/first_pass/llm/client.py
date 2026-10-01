@@ -54,7 +54,9 @@ def count_tokens(text: str, model: str = "gemini-3.8-flash") -> int:
             else:
                 raise
 
-def generate_plan(stage: str, prompt: str, schema: Any, model: str = "gemini-3.8-flash") -> str:
+from typing import Union
+
+def generate_plan(stage: str, prompt: Union[str, list], schema: Any, model: str = "gemini-3.8-flash") -> str:
     client = get_client()
     
     start_time = time.time()

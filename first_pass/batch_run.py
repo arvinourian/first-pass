@@ -113,7 +113,7 @@ for item in datasets:
     )
     
     executed_nb_path = nb_path.replace('_Validation.ipynb', '_Validation_Executed.ipynb')
-    builder.execute_notebook(nb_path, executed_nb_path)
+    builder.execute_notebook(nb_path, executed_nb_path, enable_observer=True)
     
     # Parse notebook for errors
     print("  Checking for errors...")
