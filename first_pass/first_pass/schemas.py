@@ -32,6 +32,7 @@ class CleaningPlan(BaseModel):
     steps: List[CleaningStep]
 
 class AnalysisItem(BaseModel):
+    title: str = Field(description="A human-readable narrative business question or insight (e.g. 'Does paying more pay off?')")
     template_id: str
     columns: List[str]
     params: str = "{}"

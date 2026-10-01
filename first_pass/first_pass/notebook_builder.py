@@ -138,11 +138,11 @@ class NotebookBuilder:
         self.add_markdown(analysis_md)
         
         # 8. Analysis execution
-        self.add_markdown("## Analysis Execution")
+        # Removed the generic "## Analysis Execution" header to let the sections stand on their own
         for s_idx, sec in enumerate(analysis_plan.sections):
-            self.add_markdown(f"## {sec.title}\n{sec.description}")
+            self.add_markdown(f"## {s_idx+1}. {sec.title}\n{sec.description}")
             for item in sec.analyses:
-                self.add_markdown(f"### {item.template_id}\n{item.rationale}")
+                self.add_markdown(f"### {item.title}\n{item.rationale}")
                 code = self._render_template('analysis', item.template_id, item.columns, item.params)
                 error_wrapper = (
                     f"try:\n"
@@ -232,4 +232,17 @@ class NotebookBuilder:
         with open(output_path, 'w', encoding='utf-8') as f:
             nbf.write(nb, f)
             
+        # Post-execution Synthesis Pass
+        if enable_observer:
+            from first_pass.llm.synthesis import generate_key_takeaways
+            takeaways = generate_key_takeaways(output_path, self.user_text)
+            
+            # Insert at the top (index 1, right after the title)
+            takeaway_cell = nbf.v4.new_markdown_cell(takeaways)
+            nb.cells.insert(1, takeaway_cell)
+            
+            # Save again
+            with open(output_path, 'w', encoding='utf-8') as f:
+                nbf.write(nb, f)
+                
         return output_path

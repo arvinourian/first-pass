@@ -7,7 +7,7 @@ import traceback
 from first_pass.ingest import load_spreadsheet
 from first_pass.profile import generate_profile, profile_to_json
 from first_pass.retrieval.index import PlaybookIndex
-from first_pass.llm.planner import plan_cleaning, plan_engineering, plan_analysis
+from first_pass.llm.planner import plan_cleaning, plan_engineering, plan_analysis, generate_business_questions
 from first_pass.llm.client import llm_usage_logs
 from first_pass.notebook_builder import NotebookBuilder
 from first_pass.export import export_to_html, export_to_py, export_to_docx, export_to_pdf

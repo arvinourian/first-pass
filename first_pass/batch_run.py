@@ -10,7 +10,7 @@ dotenv.load_dotenv()
 from first_pass.ingest import load_spreadsheet
 from first_pass.profile import generate_profile
 from first_pass.retrieval.index import PlaybookIndex
-from first_pass.llm.planner import plan_cleaning, plan_engineering, plan_analysis
+from first_pass.llm.planner import plan_cleaning, plan_engineering, plan_analysis, generate_business_questions
 from first_pass.llm.client import llm_usage_logs
 from first_pass.notebook_builder import NotebookBuilder
 from first_pass.schemas import AnalysisItem, AnalysisSection

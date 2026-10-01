@@ -34,20 +34,39 @@ def plan_cleaning(profile: DataProfile, playbooks: List[Playbook], user_text: st
         plan = CleaningPlan.model_validate_json(response_text)
         return plan
 
+
+class BusinessQuestions(BaseModel):
+    questions: List[str]
+
+def generate_business_questions(profile: DataProfile, user_text: str = "") -> List[str]:
+    sys_prompt = "You are a Strategy Consultant. Review this dataset profile and output exactly 5 highly specific narrative business questions that should be answered by exploratory data analysis (e.g. 'Does paying more for tuition yield a higher return on investment?')."
+    
+    context = f"Data Profile:\n{profile.model_dump_json(exclude_none=True)}\n\n"
+    if user_text:
+        context += f"User Instructions:\n{user_text}\n"
+        
+    try:
+        response_text = generate_plan("pass3_questions", [sys_prompt, context], BusinessQuestions)
+        plan = BusinessQuestions.model_validate_json(response_text)
+        return plan.questions
+    except Exception as e:
+        print(f"Error generating questions: {e}")
+        return ["What are the key distributions?", "What are the core correlations?"]
+
 def plan_analysis(profile: DataProfile, playbooks: List[Playbook], user_text: str = "") -> AnalysisPlan:
     sys_prompt = """You are a data analysis planning AI. Output a structured JSON plan for analysis. For the `params` field, output a valid JSON string representing the parameter dictionary.
 CRITICAL: Only use templates that are explicitly specified in the provided Playbooks. Do not hallucinate template IDs.
 
 Planner selection rules:
 1. Prioritize analyses involving columns or goals the user mentioned in their text input. Explicitly extract and list the `target_variables`.
-2. Group your analyses into logical, thematic `sections` (e.g. "Data Overview", "Target Distribution", "Geographic Trends"). This provides a narrative flow.
+2. NARRATIVE ARCHITECTURE: Do NOT group your analyses by statistical methodology (e.g. "Distributions", "Multivariate"). Instead, you must act as a Senior Strategy Consultant. Group your analyses into `sections` representing narrative business questions (e.g. "Return on Investment: Does paying more for tuition pay off?", "Student-level Levers: Internships & GPA", "Geographic Trends").
 3. Be EXHAUSTIVE and COMPREHENSIVE in your exploration, but PRUNE redundant charts. Do not pick 5 simple bar charts; use `multi_bar` instead.
 4. Utilize advanced tools like `ols_regression`, `scatter_regression`, and `target_corr_ranked` if there is a clear target variable.
-5. ADVANCED DOMAIN MODELING: You are a senior data scientist. If standard templates are not enough to explore a domain-specific hypothesis (e.g., Sales-Ratio studies for Real Estate, Baseline ML Models, Repeat-Purchase patterns), use the `custom_code` template to write highly complex, free-form Pandas/Scikit-Learn/Statsmodels code to execute the analysis and print the results!
+5. ADVANCED DOMAIN MODELING: You are a senior data scientist. If standard templates are not enough to explore a domain-specific hypothesis, use the `custom_code` template to write highly complex, free-form code!
 6. If there are interesting avenues for future investigation that are beyond the scope of these templates, list them in the `further_analyses` field.
-7. DATA LEAKAGE & REDUNDANCY: Recognize mathematically equivalent or derived features (e.g. 'price' and 'log_price', 'age' and 'birth_year'). NEVER correlate or analyze them against each other, as the relationship is mathematically trivial. Pick the single best representation of the variable for your predictive analysis and omit the redundant ones.
+7. DATA LEAKAGE & REDUNDANCY: Recognize mathematically equivalent or derived features.
 8. Never select a template whose "Applies when" preconditions are not met.
-9. Every plan item must include `template_id`, `columns`, `params`, `rationale` (one sentence), and `playbook_ids`.
+9. Every AnalysisItem must include a `title` representing a specific human-readable business question (e.g. "What is the ROI distribution?"), `template_id`, `columns`, `params`, `rationale`, and `playbook_ids`.
 """
     
     context = f"Cleaned Data Profile:\n{profile.model_dump_json(exclude_none=True)}\n\n"
