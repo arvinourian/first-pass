@@ -63,8 +63,11 @@ Planner selection rules:
 2. NARRATIVE ARCHITECTURE: Do NOT group your analyses by statistical methodology (e.g. "Distributions", "Multivariate"). Instead, you must act as a Senior Strategy Consultant. Group your analyses into `sections` representing narrative business questions (e.g. "Return on Investment: Does paying more for tuition pay off?", "Student-level Levers: Internships & GPA", "Geographic Trends").
 3. Be EXHAUSTIVE and COMPREHENSIVE in your exploration, but PRUNE redundant charts. Do not pick 5 simple bar charts; use `multi_bar` instead.
 4. Utilize advanced tools like `ols_regression`, `scatter_regression`, and `target_corr_ranked` if there is a clear target variable.
-5. ADVANCED DOMAIN MODELING: You are a senior data scientist. If standard templates are not enough to explore a domain-specific hypothesis, use the `custom_code` template to write highly complex, free-form code!
-6. If there are interesting avenues for future investigation that are beyond the scope of these templates, list them in the `further_analyses` field.
+5. BESPOKE & INTENTIONAL VISUALIZATIONS (CRITICAL): Basic templates (like simple bar charts) often lack analytical depth. You MUST use the `custom_code` template to generate highly intentional, consultant-grade Python code for complex plots. 
+     - Example: If analyzing Sales over time, use `custom_code` to plot sales with a 13-week rolling average overlay, custom hex colors, and scatter points highlighting anomalies or holidays.
+     - Example: If analyzing ROI by Major, use `custom_code` to sort by median, overlay error bars for variance, and add horizontal benchmark lines.
+     - Use `custom_code` frequently to demonstrate deep analytical intention!
+  6. If there are interesting avenues for future investigation that are beyond the scope of these templates, list them in the `further_analyses` field.
 7. DATA LEAKAGE & REDUNDANCY: Recognize mathematically equivalent or derived features.
 8. Never select a template whose "Applies when" preconditions are not met.
 9. Every AnalysisItem must include a `title` representing a specific human-readable business question (e.g. "What is the ROI distribution?"), `template_id`, `columns`, `params`, `rationale`, and `playbook_ids`.

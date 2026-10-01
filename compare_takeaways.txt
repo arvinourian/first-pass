@@ -1,0 +1,23 @@
+=== Claude Key Takeaways ===
+Dataset: all_ironman_suit.csv · 49 suits (Mark 1 → Mark 85) · 7 text columns: model, era, codename, primary ability, date made, estimated value, key movie appearances
+
+This is a small, hand-curated fictional (MCU) catalogue, so the analysis is about structure and patterns in the catalogue — how value, timing,
+capabilities and screen time are distributed — rather than statistical inference. Values are fan/in-universe estimates, not real prices.
+
+The raw file needs parsing: header names carry trailing spaces, values are strings like $1.8 Billion, dates mix exact months with ranges (May-Dec 2012) and vague terms (Mid 2009, Late 2014), and Codename uses N/A for none.
+
+Summary. After cleaning, all 49 rows parse with no missing values. Codenames exist for 37 suits; the 12 without are mostly the "named" hero suits (Marks 1–4, 6, 7, 43, 45–47, 50, 85).
+
+Insights.
+
+=== First Pass Key Takeaways ===
+## Key Takeaways
+### Key Takeaways: Stark Armor Portfolio Analysis
+
+* **Production Volume Heavily Skewed Toward Rapid Prototyping:** Over **71% of the fleet** (35 of 49 suits) falls under the *Prototypes / Specialists* era, illustrating an intense, concentrated R&D cycle driven by threat preparation (e.g., the Iron Legion / *Iron Man 3*) rather than broad serial manufacturing.
+* **Substantial R&D Capital Inflation Across Lifecycle:** Unit asset values escalate dramatically across development phases:
+  * **Foundations:** Median unit cost of **$130M** (mean $135.7M, peaking at $250M).
+  * **Prototypes / Specialists:** Median unit cost surges to **$260M** (mean $281.6M, peaking at $625M).
+  * **Post-Malibu Era:** Premium capital tier with a median unit cost of **$450M** (peaking at $650M), reflecting high-density miniaturization and advanced nanotechnology investments.
+* **Catalog Governance & Asset Metadata Gaps:** Exactly **24.5% of records (12 of 49)** lack official tactical codenames, primarily among early sequential models (Mark I–VII). Establishing formal asset naming conventions is recommended for inventory auditing.
+* **ETL & Data Ingestion Hazards:** All fields were ingested as non-numeric string objects. Free-text currency values introduced parsing anomalies (such as minimum valuations of $0M and $1M). Standardizing `Estimated Value` into numeric integer millions ($M USD) and `Date Made` into native ISO timestamps should be prioritized before downstream statistical modeling.

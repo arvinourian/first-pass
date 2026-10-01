@@ -234,7 +234,18 @@ class NotebookBuilder:
             
         # Post-execution Synthesis Pass
         if enable_observer:
-            from first_pass.llm.synthesis import generate_key_takeaways
+            from first_pass.llm.synthesis import generate_key_takeaways, generate_interpretations
+            
+            print("  Generating Interpretations...")
+            interpretations = generate_interpretations(output_path, self.user_text)
+            
+            # Insert interpretations bottom-up to preserve indices
+            for interp in sorted(interpretations, key=lambda x: x.cell_index, reverse=True):
+                idx = interp.cell_index
+                if 0 <= idx < len(nb.cells):
+                    interp_cell = nbf.v4.new_markdown_cell(f"**Insight:** {interp.markdown}")
+                    nb.cells.insert(idx + 1, interp_cell)
+            
             takeaways = generate_key_takeaways(output_path, self.user_text)
             
             # Insert at the top (index 1, right after the title)
