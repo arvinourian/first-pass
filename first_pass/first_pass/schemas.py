@@ -52,3 +52,11 @@ class AnalysisPlan(BaseModel):
     target_variables: List[str] = Field(default_factory=list, description="Primary outcome variables (e.g. price, churn)")
     sections: List[AnalysisSection]
     further_analyses: List[FurtherAnalysis] = Field(default_factory=list)
+
+class NotebookPatch(BaseModel):
+    cell_index: int
+    rationale: str
+    new_code: str
+
+class ObserverResponse(BaseModel):
+    patches: List[NotebookPatch]

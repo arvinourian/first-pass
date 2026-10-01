@@ -193,44 +193,41 @@ class NotebookBuilder:
             
         client = NotebookClient(nb, timeout=600, kernel_name='python3', allow_errors=True)
         try:
-            client.setup_kernel()
-            
-            # Initial Run
-            for i, cell in enumerate(nb.cells):
-                client.execute_cell(cell, i)
-                
-            if enable_observer:
-                from first_pass.llm.observer import generate_patches
-                
-                for loop in range(max_loops):
-                    print(f"  Observer Loop {loop+1}/{max_loops}...")
-                    # Convert notebook to dict for observer
-                    cells_dict = [c.dict() for c in nb.cells]
-                    response = generate_patches(cells_dict, self.user_text)
+            with client.setup_kernel():
+                # Initial Run
+                for i, cell in enumerate(nb.cells):
+                    client.execute_cell(cell, i)
                     
-                    if not response.patches:
-                        print("    Observer found no issues. Terminating loop.")
-                        break
+                if enable_observer:
+                    from first_pass.llm.observer import generate_patches
+                    
+                    for loop in range(max_loops):
+                        print(f"  Observer Loop {loop+1}/{max_loops}...")
+                        # Convert notebook to dict for observer
+                        cells_dict = [c.dict() for c in nb.cells]
+                        response = generate_patches(cells_dict, self.user_text)
                         
-                    print(f"    Observer found {len(response.patches)} patches.")
-                    for patch in response.patches:
-                        idx = patch.cell_index
-                        if 0 <= idx < len(nb.cells):
-                            # Clear old outputs
-                            nb.cells[idx].outputs = []
-                            nb.cells[idx].execution_count = None
-                            # Replace code
-                            nb.cells[idx].source = patch.new_code
-                            # Re-execute just this cell!
-                            try:
-                                client.execute_cell(nb.cells[idx], idx)
-                            except Exception as e:
-                                print(f"    Error re-executing cell {idx}: {e}")
-                                
+                        if not response.patches:
+                            print("    Observer found no issues. Terminating loop.")
+                            break
+                            
+                        print(f"    Observer found {len(response.patches)} patches.")
+                        for patch in response.patches:
+                            idx = patch.cell_index
+                            if 0 <= idx < len(nb.cells):
+                                # Clear old outputs
+                                nb.cells[idx].outputs = []
+                                nb.cells[idx].execution_count = None
+                                # Replace code
+                                nb.cells[idx].source = patch.new_code
+                                # Re-execute just this cell!
+                                try:
+                                    client.execute_cell(nb.cells[idx], idx)
+                                except Exception as e:
+                                    print(f"    Error re-executing cell {idx}: {e}")
+                                    
         except Exception as e:
             print(f"Error executing notebook: {e}")
-        finally:
-            client.teardown_kernel()
             
         with open(output_path, 'w', encoding='utf-8') as f:
             nbf.write(nb, f)

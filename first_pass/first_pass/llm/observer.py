@@ -2,7 +2,7 @@ import json
 import base64
 from typing import List, Dict, Any
 from first_pass.llm.client import generate_plan
-from first_pass.schemas.observer import ObserverResponse
+from first_pass.schemas import ObserverResponse
 
 def generate_patches(cells: List[dict], user_text: str = "") -> ObserverResponse:
     sys_prompt = "You are an expert Data Science Observer. You are reviewing the executed cells of a Jupyter Notebook. Visually inspect the charts and review any code exceptions/errors."
@@ -38,12 +38,12 @@ def generate_patches(cells: List[dict], user_text: str = "") -> ObserverResponse
             contents.append(f"Exception:\n{error_text}")
             
         if has_image:
+            from google.genai import types
             for out in outputs:
                 if out.get('output_type') == 'display_data' and 'image/png' in out.get('data', {}):
                     img_b64 = out['data']['image/png'].strip()
                     contents.append(
-                        # Multimodal format for Google GenAI v1beta
-                        {"mime_type": "image/png", "data": img_b64}
+                        types.Part.from_bytes(data=base64.b64decode(img_b64), mime_type="image/png")
                     )
                     
     try:
