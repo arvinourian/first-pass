@@ -148,7 +148,7 @@ if uploaded_file is not None:
             # Prepend static overview analyses
             from first_pass.schemas import AnalysisItem, AnalysisSection
             static_analyses = [
-                AnalysisItem(template_id="column_overview", columns=[], rationale="Overview of column types and missing values.", playbook_ids=[]),
+                AnalysisItem(title="Column Overview", template_id="column_overview", columns=[], rationale="Overview of column types and missing values.", playbook_ids=[]),
                 AnalysisItem(template_id="summary_stats", columns=[], rationale="High-level summary statistics of all columns.", playbook_ids=[])
             ]
                 
