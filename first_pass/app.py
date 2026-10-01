@@ -51,8 +51,7 @@ if uploaded_file is not None:
             enable_domain = st.checkbox("Enable Domain Context (Pass 0)", value=True, help="Injects industry KPIs before planning.")
         with col_t2:
             enable_engineering = st.checkbox("Enable Feature Engineering (Pass 2)", value=True, help="Mathematically transforms data before analysis.")
-        with col_t3:
-            enable_synthesis = st.checkbox("Enable Executive Synthesis (Pass 4)", value=True, help="Writes a human-readable business report of the findings.")
+
         
     st.markdown("<br>", unsafe_allow_html=True)
     col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
@@ -197,17 +196,8 @@ if uploaded_file is not None:
                 llm_usage_logs[i]['timestamp'] = run_timestamp
             
             
-            synthesis_path = None
-            if enable_synthesis:
-                my_bar.progress(95, text="Stage 7: RAG Pass 4 (Executive Synthesis)...")
-                from first_pass.llm.synthesis import synthesize_report
-                report_md = synthesize_report(executed_nb_path, combined_instructions)
-                synthesis_path = os.path.join("temp", f"{base_name}_Executive_Summary.md")
-                with open(synthesis_path, 'w', encoding='utf-8') as sf:
-                    sf.write(report_md)
-            
             # Save results in session state
-            st.session_state['synthesis_path'] = synthesis_path
+            st.session_state['synthesis_path'] = None
             st.session_state['run_complete'] = True
             st.session_state['executed_nb_path'] = executed_nb_path
             st.session_state['html_path'] = html_path
