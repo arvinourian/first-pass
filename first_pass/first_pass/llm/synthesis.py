@@ -35,14 +35,19 @@ def generate_key_takeaways(notebook_path: str, user_text: str = "") -> str:
     if len(text_content) > 100000:
         text_content = text_content[:100000]
         
-    sys_prompt = "You are a Senior Data Consultant. Review this generated Exploratory Data Analysis notebook and write a concise, bulleted 'Key Takeaways' section summarizing the most critical business insights found in the data. Format it elegantly in Markdown."
+    sys_prompt = "You are a Senior Data Consultant. Review this generated Exploratory Data Analysis notebook and write a concise, bulleted 'Key Takeaways' section summarizing the most critical business insights found in the data. Format it elegantly in Markdown. DO NOT INCLUDE A TITLE OR HEADER (e.g. do not write '## Key Takeaways'), just provide the bullet points directly."
     
     prompt = f"{sys_prompt}\\n\\nNotebook Extracts:\\n{text_content}"
     
     try:
         response_text = generate_plan("pass5_synthesis", prompt, NotebookSynthesis)
         plan = NotebookSynthesis.model_validate_json(response_text)
-        return "## Key Takeaways\\n" + plan.markdown
+        md = plan.markdown.strip()
+        lines = md.split('\n')
+        while lines and lines[0].strip().startswith('#'):
+            lines.pop(0)
+        md = '\n'.join(lines).strip()
+        return "## Key Takeaways\\n\\n" + md
     except Exception as e:
         print(f"Error generating synthesis: {e}")
         return "## Key Takeaways\\n* Synthesis generation failed."
