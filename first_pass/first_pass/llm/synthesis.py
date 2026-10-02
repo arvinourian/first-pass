@@ -20,24 +20,24 @@ def generate_key_takeaways(notebook_path: str, user_text: str = "") -> str:
     text_content = ""
     for cell in nb.get('cells', []):
         if cell['cell_type'] == 'markdown':
-            text_content += "".join(cell['source']) + "\\n\\n"
+            text_content += "".join(cell['source']) + "\n\n"
         elif cell['cell_type'] == 'code':
             for out in cell.get('outputs', []):
                 if out.get('output_type') == 'execute_result' and 'text/plain' in out.get('data', {}):
                     p = out['data']['text/plain']
                     if isinstance(p, list): p = ''.join(p)
-                    text_content += p + "\\n"
+                    text_content += p + "\n"
                 elif out.get('output_type') == 'stream':
                     t = out.get('text', '')
                     if isinstance(t, list): t = ''.join(t)
-                    text_content += t + "\\n"
+                    text_content += t + "\n"
                     
     if len(text_content) > 100000:
         text_content = text_content[:100000]
         
     sys_prompt = "You are a Senior Data Consultant. Review this generated Exploratory Data Analysis notebook and write a concise, bulleted 'Key Takeaways' section summarizing the most critical business insights found in the data. Format it elegantly in Markdown. DO NOT INCLUDE A TITLE OR HEADER (e.g. do not write '## Key Takeaways'), just provide the bullet points directly."
     
-    prompt = f"{sys_prompt}\\n\\nNotebook Extracts:\\n{text_content}"
+    prompt = f"{sys_prompt}\n\nNotebook Extracts:\n{text_content}"
     
     try:
         response_text = generate_plan("pass5_synthesis", prompt, NotebookSynthesis)
@@ -47,10 +47,10 @@ def generate_key_takeaways(notebook_path: str, user_text: str = "") -> str:
         while lines and lines[0].strip().startswith('#'):
             lines.pop(0)
         md = '\n'.join(lines).strip()
-        return "## Key Takeaways\\n\\n" + md
+        return "## Key Takeaways\n\n" + md
     except Exception as e:
         print(f"Error generating synthesis: {e}")
-        return "## Key Takeaways\\n* Synthesis generation failed."
+        return "## Key Takeaways\n* Synthesis generation failed."
 
 def generate_interpretations(notebook_path: str, user_text: str = "") -> List[CellInterpretation]:
     with open(notebook_path, 'r', encoding='utf-8') as f:
@@ -63,19 +63,19 @@ def generate_interpretations(notebook_path: str, user_text: str = "") -> List[Ce
         if cell['cell_type'] != 'code': continue
         
         has_output = False
-        cell_contents = [f"--- Cell {i} ---", f"Code:\\n```python\\n{''.join(cell['source'])}\\n```"]
+        cell_contents = [f"--- Cell {i} ---", f"Code:\n```python\n{''.join(cell['source'])}\n```"]
         
         for out in cell.get('outputs', []):
             if out.get('output_type') == 'execute_result' and 'text/plain' in out.get('data', {}):
                 has_output = True
                 p = out['data']['text/plain']
                 if isinstance(p, list): p = ''.join(p)
-                cell_contents.append(f"Output:\\n{p}")
+                cell_contents.append(f"Output:\n{p}")
             elif out.get('output_type') == 'stream':
                 has_output = True
                 t = out.get('text', '')
                 if isinstance(t, list): t = ''.join(t)
-                cell_contents.append(f"Output:\\n{t}")
+                cell_contents.append(f"Output:\n{t}")
             elif out.get('output_type') == 'display_data' and 'image/png' in out.get('data', {}):
                 has_output = True
                 import base64
