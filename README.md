@@ -1,4 +1,4 @@
-# ðŸš€ First Pass
+# First Pass
 
 **First Pass** is an automated AI data scientist designed to perform the initial heavy lifting of data exploration. Upload a dataset, and First Pass will ingest, profile, clean, engineer features, and analyze the data, ultimately generating a fully executed Jupyter Notebook and comprehensive multi-format reports.
 
@@ -17,22 +17,22 @@
 
 ```text
 First Pass/
-â”œâ”€â”€ app.py                           # The main Streamlit web application interface
-â”œâ”€â”€ batch_run.py                     # Script for headless bulk evaluation on sample datasets
-â”œâ”€â”€ first_pass/                      # Core Python package backend
-â”‚   â”œâ”€â”€ ingest.py                    # Data loading logic
-â”‚   â”œâ”€â”€ profile.py                   # Data profiling (types, missing values, stats)
-â”‚   â”œâ”€â”€ notebook_builder.py          # Jupyter notebook generation and execution engine
-â”‚   â”œâ”€â”€ export.py                    # HTML, PDF, DOCX, and script export utilities
-â”‚   â”œâ”€â”€ telemetry.py                 # Telemetry and logging module
-â”‚   â”œâ”€â”€ llm/                         # LLM agent logic (Planner, Synthesis, Observer)
-â”‚   â”œâ”€â”€ retrieval/                   # Playbook index and semantic RAG search
-â”‚   â””â”€â”€ templates/                   # Repository of analysis and cleaning code templates
-â”œâ”€â”€ playbooks/                       # Markdown files containing expert domain knowledge and RAG schemas
-â”œâ”€â”€ Sample Inputs/                   # Example raw datasets and context files
-â”œâ”€â”€ Sample Outputs/                  # Example generated HTML reports
-â”œâ”€â”€ tests/                           # Unit tests
-â””â”€â”€ temp/                            # Temporary directory for intermediate notebook execution
+|-- app.py                           # The main Streamlit web application interface
+|-- batch_run.py                     # Script for headless bulk evaluation on sample datasets
+|-- first_pass/                      # Core Python package backend
+|   |-- ingest.py                    # Data loading logic
+|   |-- profile.py                   # Data profiling (types, missing values, stats)
+|   |-- notebook_builder.py          # Jupyter notebook generation and execution engine
+|   |-- export.py                    # HTML, PDF, DOCX, and script export utilities
+|   |-- telemetry.py                 # Telemetry and logging module
+|   |-- llm/                         # LLM agent logic (Planner, Synthesis, Observer)
+|   |-- retrieval/                   # Playbook index and semantic RAG search
+|   `-- templates/                   # Repository of analysis and cleaning code templates
+|-- playbooks/                       # Markdown files containing expert domain knowledge and RAG schemas
+|-- Sample Inputs/                   # Example raw datasets and context files
+|-- Sample Outputs/                  # Example generated HTML reports
+|-- tests/                           # Unit tests
+`-- temp/                            # Temporary directory for intermediate notebook execution
 ```
 
 ## Setup & Installation
