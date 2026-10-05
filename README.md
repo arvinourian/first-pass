@@ -66,7 +66,7 @@ First Pass uses a dynamic **Retrieval-Augmented Generation (RAG)** architecture.
 ### Pipeline Schematic
 
 ```mermaid
-flowchart LR
+flowchart TD
     %% Inputs
     User(["User Uploads Dataset and Instructions"])
     
