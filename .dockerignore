@@ -1,0 +1,11 @@
+.env
+.git
+.gitignore
+__pycache__
+.pytest_cache
+*.pyc
+temp/
+Sample Inputs/
+Sample Outputs/
+telemetry.jsonl
+README.md

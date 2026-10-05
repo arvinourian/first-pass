@@ -46,11 +46,16 @@ def export_to_pdf(notebook_path: str, output_dir: str):
     pdf_path = os.path.join(output_dir, f"{base_name}.pdf")
     abs_html = os.path.abspath(html_path)
     abs_pdf = os.path.abspath(pdf_path)
-    edge_path = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-    if not os.path.exists(edge_path):
-        edge_path = "msedge"
+    
+    if os.name == 'nt':
+        browser_path = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+        if not os.path.exists(browser_path):
+            browser_path = "msedge"
+    else:
+        browser_path = "google-chrome"
+        
     subprocess.run(
-        [edge_path, "--headless", f"--print-to-pdf={abs_pdf}", abs_html],
+        [browser_path, "--headless", "--no-sandbox", "--disable-gpu", f"--print-to-pdf={abs_pdf}", abs_html],
         check=True, capture_output=True, text=True
     )
     return pdf_path
