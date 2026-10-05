@@ -65,7 +65,7 @@ First Pass uses a dynamic **Retrieval-Augmented Generation (RAG)** architecture.
 
 ### Pipeline Schematic
 
-`mermaid
+```mermaid
 flowchart LR
     %% Styling
     classDef input fill:#e1bee7,stroke:#8e24aa,stroke-width:2px,color:#000
@@ -76,28 +76,28 @@ flowchart LR
     classDef output fill:#cfd8dc,stroke:#546e7a,stroke-width:2px,color:#000
 
     %% Inputs
-    User([User Uploads Dataset & Instructions]) ::: input
+    User(["User Uploads Dataset and Instructions"]) ::: input
     
     %% Stage 1: Ingestion
-    Ingest[Ingest & Profile Data<br><i>Generates stats, types, missing values</i>] ::: process
-    Profile[(Raw Data Profile)] ::: database
+    Ingest["Ingest and Profile Data (Stats, Types, Missing)"] ::: process
+    Profile[("Raw Data Profile")] ::: database
     
     User --> Ingest
     Ingest --> Profile
 
     %% RAG Knowledge Base
-    subgraph Knowledge Base [Vector Playbook Index]
-        DB_Domain[(Domain Playbooks)] ::: database
-        DB_Clean[(Cleaning Playbooks)] ::: database
-        DB_Eng[(Engineering Playbooks)] ::: database
-        DB_Analysis[(Analysis Playbooks)] ::: database
+    subgraph Knowledge_Base [Vector Playbook Index]
+        DB_Domain[("Domain Playbooks")] ::: database
+        DB_Clean[("Cleaning Playbooks")] ::: database
+        DB_Eng[("Engineering Playbooks")] ::: database
+        DB_Analysis[("Analysis Playbooks")] ::: database
     end
 
     %% Pass 0: Domain
-    subgraph Pass 0: Domain Context
-        P0_Query[Query: Profile + Intent] ::: process
-        P0_RAG{Semantic Search} ::: rag
-        P0_Context[Inject Industry KPIs & Context] ::: agent
+    subgraph Pass_0 [Pass 0: Domain Context]
+        P0_Query["Query: Profile + Intent"] ::: process
+        P0_RAG{"Semantic Search"} ::: rag
+        P0_Context["Inject Industry KPIs and Context"] ::: agent
         
         Profile --> P0_Query
         P0_Query --> P0_RAG
@@ -106,12 +106,12 @@ flowchart LR
     end
 
     %% Pass 1: Cleaning
-    subgraph Pass 1: Data Cleaning
-        P1_Query[Query: Missing/Dupes Stats] ::: process
-        P1_RAG{Semantic Search} ::: rag
-        P1_Plan[LLM generates Cleaning JSON] ::: agent
-        P1_Exec[Execute Cleaning Code] ::: process
-        CleanProfile[(Cleaned Profile)] ::: database
+    subgraph Pass_1 [Pass 1: Data Cleaning]
+        P1_Query["Query: Missing/Dupes Stats"] ::: process
+        P1_RAG{"Semantic Search"} ::: rag
+        P1_Plan["LLM generates Cleaning JSON"] ::: agent
+        P1_Exec["Execute Cleaning Code"] ::: process
+        CleanProfile[("Cleaned Profile")] ::: database
 
         P0_Context --> P1_Query
         P1_Query --> P1_RAG
@@ -122,10 +122,10 @@ flowchart LR
     end
 
     %% Pass 2: Engineering
-    subgraph Pass 2: Feature Engineering
-        P2_Query[Query: Cleaned Profile] ::: process
-        P2_RAG{Semantic Search} ::: rag
-        P2_Plan[LLM generates Engineering JSON] ::: agent
+    subgraph Pass_2 [Pass 2: Feature Engineering]
+        P2_Query["Query: Cleaned Profile"] ::: process
+        P2_RAG{"Semantic Search"} ::: rag
+        P2_Plan["LLM generates Engineering JSON"] ::: agent
         
         CleanProfile --> P2_Query
         P2_Query --> P2_RAG
@@ -134,10 +134,10 @@ flowchart LR
     end
 
     %% Pass 3: Analysis
-    subgraph Pass 3: Analysis Planning
-        P3_Query[Query: Engineered Profile] ::: process
-        P3_RAG{Semantic Search} ::: rag
-        P3_Plan[LLM generates custom_code & Questions] ::: agent
+    subgraph Pass_3 [Pass 3: Analysis Planning]
+        P3_Query["Query: Engineered Profile"] ::: process
+        P3_RAG{"Semantic Search"} ::: rag
+        P3_Plan["LLM generates custom_code and Questions"] ::: agent
         
         P2_Plan --> P3_Query
         P3_Query --> P3_RAG
@@ -146,21 +146,21 @@ flowchart LR
     end
 
     %% Pass 4: Observer & Execution
-    subgraph Pass 4: Assembly & Observer Loop
-        NB_Build[NotebookBuilder transpiles JSON to .ipynb] ::: process
-        Kernel[Execute Jupyter Kernel] ::: process
-        Observer{Multimodal Observer Agent} ::: agent
-        Fix[LLM patches syntax/layout errors] ::: process
+    subgraph Pass_4 [Pass 4: Assembly and Observer Loop]
+        NB_Build["NotebookBuilder transpiles JSON to .ipynb"] ::: process
+        Kernel["Execute Jupyter Kernel"] ::: process
+        Observer{"Multimodal Observer Agent"} ::: agent
+        Fix["LLM patches syntax/layout errors"] ::: process
         
         P3_Plan --> NB_Build
         NB_Build --> Kernel
         Kernel --> Observer
-        Observer -- Detects Exception or Visual Flaw --> Fix
+        Observer -- "Detects Exception or Visual Flaw" --> Fix
         Fix --> Kernel
     end
 
     %% Output
-    Export[Export HTML, PDF, Scripts, Datasets] ::: output
+    Export["Export HTML, PDF, Scripts, Datasets"] ::: output
     
-    Observer -- Clean Execution --> Export
-`
+    Observer -- "Clean Execution" --> Export
+```
