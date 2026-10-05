@@ -68,7 +68,21 @@ for item in datasets:
         cleaning_pbs = [pb for pb in idx.playbooks if pb.category == 'cleaning'][:4]
     cleaning_plan = plan_cleaning(raw_profile, cleaning_pbs, user_instructions)
     
-    cleaned_profile = raw_profile
+    from first_pass.templates.registry import get_template_code
+    for step in cleaning_plan.steps:
+        try:
+            params_dict = json.loads(step.params) if isinstance(step.params, str) else step.params
+        except:
+            params_dict = {}
+        code_snippet = get_template_code('cleaning', step.template_id, step.columns, params_dict)
+        try:
+            local_vars = {'df': df, 'pd': pd}
+            exec(code_snippet, globals(), local_vars)
+            df = local_vars['df']
+        except Exception as ex:
+            pass
+            
+    cleaned_profile = generate_profile(df)
     
     print("  Planning engineering...")
     query_e = f"engineering scaling datetime binning pca. " + user_instructions
