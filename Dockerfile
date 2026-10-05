@@ -8,15 +8,11 @@ ENV PYTHONUNBUFFERED True
 ENV APP_HOME /app
 WORKDIR $APP_HOME
 
-# Install system dependencies (Pandoc for DOCX, Chrome for PDF)
+# Install system dependencies (Pandoc for DOCX, Chromium for PDF, libgomp1 for faiss-cpu)
 RUN apt-get update && apt-get install -y \
-    wget \
-    gnupg \
     pandoc \
-    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-    && apt-get update \
-    && apt-get install -y google-chrome-stable \
+    chromium \
+    libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install python dependencies

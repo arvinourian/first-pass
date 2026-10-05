@@ -52,7 +52,7 @@ def export_to_pdf(notebook_path: str, output_dir: str):
         if not os.path.exists(browser_path):
             browser_path = "msedge"
     else:
-        browser_path = "google-chrome"
+        browser_path = "chromium"
         
     subprocess.run(
         [browser_path, "--headless", "--no-sandbox", "--disable-gpu", f"--print-to-pdf={abs_pdf}", abs_html],
