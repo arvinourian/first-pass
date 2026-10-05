@@ -127,11 +127,11 @@ flowchart TD
 
     %% Pass 3: Analysis
     subgraph Pass_3 [Pass 3: Analysis Planning]
-        P3_Query["Query: Engineered Profile"]
+        P3_Query["Query: Cleaned Profile"]
         P3_RAG{"Semantic Search"}
         P3_Plan["LLM generates custom_code and Questions"]
         
-        P2_Plan --> P3_Query
+        CleanProfile --> P3_Query
         P3_Query --> P3_RAG
         DB_Analysis -.-> P3_RAG
         P3_RAG --> P3_Plan
@@ -144,6 +144,8 @@ flowchart TD
         Observer{"Multimodal Observer Agent"}
         Fix["LLM patches syntax/layout errors"]
         
+        P1_Plan --> NB_Build
+        P2_Plan --> NB_Build
         P3_Plan --> NB_Build
         NB_Build --> Kernel
         Kernel --> Observer
@@ -156,3 +158,5 @@ flowchart TD
     
     Observer -- "Clean Execution" --> Export
 ```
+
+
