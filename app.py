@@ -20,7 +20,7 @@ import dotenv
 dotenv.load_dotenv()
 
 # App Header
-st.markdown("<h1 style='text-align: center; font-size: 3.5rem; margin-bottom: 0;'>🚀 First Pass</h1>", unsafe_allow_html=True)
+st.markdown("<div style='font-weight: 700; text-align: center; font-size: 3.5rem; margin-bottom: 0;'>🚀 First Pass</div>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; font-size: 1.2rem; color: #555; margin-bottom: 2rem;'>An automated AI data scientist that provides a quick <b>First Pass</b> of your data to guide you in the right direction for further analysis. Upload a dataset to instantly generate an executed Jupyter Notebook, cleaned datasets, and multi-format reports.</p>", unsafe_allow_html=True)
 
 # Main Container
