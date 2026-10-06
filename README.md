@@ -1,9 +1,9 @@
 # ⚡ First Pass: Autonomous Agentic RAG Data Scientist
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://first-pass-266147069886.us-central1.run.app/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-nourian.dev-FF4B4B?logo=streamlit&logoColor=white)](https://nourian.dev/projects#first-pass)
 [![Google Cloud Run](https://img.shields.io/badge/Google%20Cloud-Run-4285F4?logo=googlecloud&logoColor=white)](https://cloud.google.com/run)
-[![Gemini API](https://img.shields.io/badge/Powered%20by-Gemini%201.5-8E75B2?logo=google&logoColor=white)](https://deepmind.google/technologies/gemini/)
+[![Gemini API](https://img.shields.io/badge/Powered%20by-Gemini%203.8%20Flash-8E75B2?logo=google&logoColor=white)](https://deepmind.google/technologies/gemini/)
 
 **First Pass** is an autonomous AI data scientist designed to automate the heavy lifting of exploratory data analysis (EDA). Built with a specialized **4-stage Agentic RAG architecture**, the system dynamically ingests raw datasets, retrieves domain-specific analysis strategies, and generates fully executed Jupyter Notebooks without human intervention. 
 
