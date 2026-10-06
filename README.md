@@ -1,69 +1,38 @@
-# First Pass
+# ⚡ First Pass: Autonomous Agentic RAG Data Scientist
 
-**First Pass** is an automated AI data scientist designed to perform the initial heavy lifting of data exploration. Upload a dataset, and First Pass will ingest, profile, clean, engineer features, and analyze the data, ultimately generating a fully executed Jupyter Notebook and comprehensive multi-format reports.
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://first-pass-266147069886.us-central1.run.app/)
+[![Google Cloud Run](https://img.shields.io/badge/Google%20Cloud-Run-4285F4?logo=googlecloud&logoColor=white)](https://cloud.google.com/run)
+[![Gemini API](https://img.shields.io/badge/Powered%20by-Gemini%201.5-8E75B2?logo=google&logoColor=white)](https://deepmind.google/technologies/gemini/)
 
-## Features
+**First Pass** is an autonomous AI data scientist designed to automate the heavy lifting of exploratory data analysis (EDA). Built with a specialized **4-stage Agentic RAG architecture**, the system dynamically ingests raw datasets, retrieves domain-specific analysis strategies, and generates fully executed Jupyter Notebooks without human intervention. 
 
-- **Multi-Format Ingestion**: Supports `.csv`, `.xlsx`, `.xls`, and `.parquet` files.
-- **4-Stage AI Pipeline**:
-  - **Domain Context (Pass 0)**: Injects industry-specific KPIs and best practices based on the dataset's profile.
-  - **Data Cleaning (Pass 1)**: Intelligently handles missing values, standardizes date formats, and removes duplicates.
-  - **Feature Engineering (Pass 2)**: Mathematically transforms data (e.g., binning, scaling, extracting time features) before analysis.
-  - **Analysis Planning (Pass 3)**: Formulates targeted business questions and generates consultant-grade Matplotlib/Seaborn Python code using specialized RAG playbooks.
-- **Observer Loop (Pass 4)**: A multimodal vision agent that supervises the notebook execution, catching syntax errors (like `IndentationError`) and iteratively refining chart layouts.
-- **Rich Exports**: Download the executed Jupyter Notebook (`.ipynb`), Python script (`.py`), HTML Report, PDF, DOCX, or the finalized cleaned datasets.
+Stop writing boilerplate code to clean missing values, parse dates, and plot correlation matrices. Upload your data, and let First Pass do the rest.
 
-## Directory Structure
+---
 
-```text
-First Pass/
-|-- app.py                           # The main Streamlit web application interface
-|-- batch_run.py                     # Script for headless bulk evaluation on sample datasets
-|-- first_pass/                      # Core Python package backend
-|   |-- ingest.py                    # Data loading logic
-|   |-- profile.py                   # Data profiling (types, missing values, stats)
-|   |-- notebook_builder.py          # Jupyter notebook generation and execution engine
-|   |-- export.py                    # HTML, PDF, DOCX, and script export utilities
-|   |-- telemetry.py                 # Telemetry and logging module
-|   |-- llm/                         # LLM agent logic (Planner, Synthesis, Observer)
-|   |-- retrieval/                   # Playbook index and semantic RAG search
-|   `-- templates/                   # Repository of analysis and cleaning code templates
-|-- playbooks/                       # Markdown files containing expert domain knowledge and RAG schemas
-|-- Sample Inputs/                   # Example raw datasets and context files
-|-- Sample Outputs/                  # Example generated HTML reports
-|-- tests/                           # Unit tests
-`-- temp/                            # Temporary directory for intermediate notebook execution
-```
+## 🎯 Key Capabilities
 
-## Setup & Installation
+* **Agentic Playbook RAG:** Dynamically maps your dataset's statistical profile to a vector database of expert data science "playbooks" (e.g., retrieving advanced time-series analysis templates when temporal columns are detected).
+* **Autonomous Execution:** A custom `NotebookBuilder` engine transpiles LLM-generated JSON execution plans directly into raw `.ipynb` files.
+* **Multimodal Self-Correction:** An integrated Vision-Language Observer agent supervises notebook execution, iteratively detecting and patching Python runtime exceptions and malformed chart layouts on the fly.
+* **Zero-Configuration UI:** A polished Streamlit interface offering multi-format data ingestion (`.csv`, `.parquet`, `.xlsx`) and instant reporting exports (HTML, PDF, DOCX).
+* **Production-Ready:** Fully Dockerized and configured for zero-to-scale deployment on Google Cloud Run.
 
-1. Ensure you have Python 3.10+ installed.
-2. Install dependencies (e.g. `streamlit`, `pandas`, `matplotlib`, `seaborn`, `nbformat`, `nbconvert`).
-3. Add your Gemini API key to a `.env` file in the root directory:
-   ```env
-   GEMINI_API_KEY="your_api_key_here"
-   ```
+---
 
-## Usage
+## 🧠 System Architecture
 
-### Web Interface
-To launch the interactive web application, run:
-```bash
-streamlit run app.py
-```
+First Pass operates on a sequential, multi-agent pipeline designed to mimic the workflow of a human data scientist:
 
-### Batch Processing
-To run the automated pipeline across the datasets in `Sample Inputs` and output reports to `Sample Outputs`, execute:
-```bash
-python batch_run.py
-```
+1. **Pass 0 (Domain Context):** Injects industry-specific KPIs and best practices based on the dataset's initial statistical profile.
+2. **Pass 1 (Data Cleaning):** Intelligently handles missing values, standardizes types, and mathematically imputes anomalies in-memory.
+3. **Pass 2 (Feature Engineering):** Mathematically transforms features (e.g., binning, scaling, temporal extraction) to surface deeper signals.
+4. **Pass 3 (Analysis Planning):** Formulates targeted business questions and generates consultant-grade Matplotlib/Seaborn Python code using retrieved templates.
+5. **Pass 4 (Observer Loop):** Safely executes the compiled notebook in a secure Jupyter kernel, utilizing an AI observer to catch and resolve tracebacks.
 
-## Architecture
-
-First Pass uses a dynamic **Retrieval-Augmented Generation (RAG)** architecture. When a dataset is uploaded, it generates a statistical profile. This profile is used to query the `playbooks/` folder, pulling the most relevant domain knowledge, cleaning strategies, and analysis templates. The LLM Planner then constructs a JSON plan, which the `NotebookBuilder` transpiles into an `.ipynb` file. The execution environment catches warnings and errors, which are sent to the Observer agent for self-correction before final export.
-
-
-### Pipeline Schematic
+<details open>
+<summary><b>View Pipeline Schematic</b></summary>
 
 ```mermaid
 flowchart TD
@@ -158,5 +127,68 @@ flowchart TD
     
     Observer -- "Clean Execution" --> Export
 ```
+</details>
 
+---
 
+## 🚀 Getting Started
+
+### Local Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/arvinourian/first-pass.git
+   cd first-pass
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Configure the Environment:**
+   Create a `.env` file in the root directory and add your Gemini API key:
+   ```env
+   GEMINI_API_KEY="your_gemini_api_key_here"
+   ```
+
+4. **Launch the Web Interface:**
+   ```bash
+   streamlit run app.py
+   ```
+
+### Docker Deployment (Google Cloud Run)
+
+First Pass is production-ready for Google Cloud Run or any Linux-based container orchestration system. The included `Dockerfile` automatically installs the necessary Chromium and Pandoc system dependencies for headless PDF and DOCX reporting.
+
+```bash
+docker build -t first-pass .
+docker run -p 8080:8080 --env GEMINI_API_KEY="your_api_key" first-pass
+```
+
+---
+
+## 📁 Repository Structure
+
+```text
+First Pass/
+├── app.py                           # Streamlit web application entrypoint
+├── batch_run.py                     # Headless bulk execution script for pipelines
+├── requirements.txt                 # Python dependencies
+├── Dockerfile                       # Production containerization script
+├── first_pass/                      # Core backend package
+│   ├── ingest.py                    # Data loaders (CSV, Excel, Parquet)
+│   ├── profile.py                   # Statistical dataset profiling 
+│   ├── notebook_builder.py          # Jupyter transpiler and kernel execution
+│   ├── export.py                    # Cross-platform HTML, PDF, DOCX utilities
+│   ├── telemetry.py                 # Telemetry and logging module
+│   ├── llm/                         # LLM agent logic (Planner, Observer, Prompts)
+│   ├── retrieval/                   # FAISS vector database index for playbooks
+│   └── templates/                   # Repository of Pandas/Seaborn code templates
+├── playbooks/                       # Markdown vector index (Domain, Cleaning, Analysis)
+├── Sample Inputs/                   # Example raw datasets and context guides
+└── Sample Outputs/                  # Example generated HTML reports
+```
+
+## 📝 License
+This project is open-source and available under the [MIT License](LICENSE).
