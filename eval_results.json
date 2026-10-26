@@ -1,0 +1,383 @@
+{
+  "harness_version": "1.2.0",
+  "evaluated_at": "2026-10-26T17:24:59Z",
+  "harness_duration_sec": 16.12,
+  "summary": {
+    "total_benchmark_datasets": 5,
+    "total_rows_evaluated": 121850,
+    "total_columns_evaluated": 87,
+    "profiling_latency_p50_ms": 74.34,
+    "type_inference_accuracy_pct": 100.0,
+    "rag_hit_rate_at_1_pct": 100.0,
+    "rag_recall_at_3_pct": 100.0,
+    "rag_mrr": 1.0,
+    "planner_schema_validity_pct": 100.0,
+    "target_identification_accuracy_pct": 100.0,
+    "pre_observer_cell_pass_rate_pct": 98.18,
+    "post_observer_cell_pass_rate_pct": 100.0,
+    "unhandled_cell_failure_rate_pct": 0.0,
+    "observer_patches_applied": 5,
+    "mean_run_cost_usd": 0.023234,
+    "mean_e2e_duration_sec": 273.93,
+    "min_e2e_duration_sec": 136.84,
+    "max_e2e_duration_sec": 411.02,
+    "production_run_success_rate_pct": 100.0
+  },
+  "ingestion_and_profiling": {
+    "datasets_evaluated": 5,
+    "total_rows_processed": 121850,
+    "total_columns_profiled": 87,
+    "type_inference_accuracy_pct": 100.0,
+    "latency_p50_ms": 74.34,
+    "latency_mean_ms": 345.08,
+    "latency_max_ms": 1425.79,
+    "datasets": [
+      {
+        "id": "ai_social_media",
+        "file": "AI_SocialMedia_Student_Dataset.csv",
+        "domain": "Education & Behavioral Health",
+        "rows": 16000,
+        "cols": 10,
+        "rows_match": true,
+        "cols_match": true,
+        "type_accuracy": 100.0,
+        "ingest_ms": 21.97,
+        "profile_ms": 52.38,
+        "total_ms": 74.34
+      },
+      {
+        "id": "walmart_sales",
+        "file": "Walmart_Sales.csv",
+        "domain": "Retail Time-Series Forecasting",
+        "rows": 6435,
+        "cols": 8,
+        "rows_match": true,
+        "cols_match": true,
+        "type_accuracy": 100.0,
+        "ingest_ms": 8.65,
+        "profile_ms": 17.47,
+        "total_ms": 26.12
+      },
+      {
+        "id": "ironman_suits",
+        "file": "all_ironman_suit.csv",
+        "domain": "Entity & Valuation Catalog",
+        "rows": 49,
+        "cols": 7,
+        "rows_match": true,
+        "cols_match": true,
+        "type_accuracy": 100.0,
+        "ingest_ms": 1.87,
+        "profile_ms": 7.95,
+        "total_ms": 9.82
+      },
+      {
+        "id": "college_major_roi",
+        "file": "college_major_roi.csv",
+        "domain": "Higher Education Financial ROI",
+        "rows": 30000,
+        "cols": 18,
+        "rows_match": true,
+        "cols_match": true,
+        "type_accuracy": 100.0,
+        "ingest_ms": 43.14,
+        "profile_ms": 146.2,
+        "total_ms": 189.34
+      },
+      {
+        "id": "philadelphia_opa_sfh",
+        "file": "opa data - philadelphia_sfh_modeling.csv",
+        "domain": "Municipal Real Estate Assessments",
+        "rows": 69366,
+        "cols": 44,
+        "rows_match": true,
+        "cols_match": true,
+        "type_accuracy": 100.0,
+        "ingest_ms": 273.32,
+        "profile_ms": 1152.47,
+        "total_ms": 1425.79
+      }
+    ]
+  },
+  "rag_retrieval": {
+    "total_playbooks_indexed": 25,
+    "queries_evaluated": 10,
+    "hit_rate_at_1_pct": 100.0,
+    "recall_at_3_pct": 100.0,
+    "mrr": 1.0,
+    "queries": [
+      {
+        "category": "domain",
+        "expected_id": "retail",
+        "retrieved_top3": [
+          "retail",
+          "education",
+          "real_estate"
+        ],
+        "rank": 1,
+        "hit_at_1": true
+      },
+      {
+        "category": "domain",
+        "expected_id": "education",
+        "retrieved_top3": [
+          "education",
+          "real_estate",
+          "retail"
+        ],
+        "rank": 1,
+        "hit_at_1": true
+      },
+      {
+        "category": "domain",
+        "expected_id": "real_estate",
+        "retrieved_top3": [
+          "real_estate",
+          "education",
+          "retail"
+        ],
+        "rank": 1,
+        "hit_at_1": true
+      },
+      {
+        "category": "cleaning",
+        "expected_id": "clean_parse_dates",
+        "retrieved_top3": [
+          "clean_parse_dates",
+          "clean_drop_high_nulls",
+          "clean_numeric_nulls"
+        ],
+        "rank": 1,
+        "hit_at_1": true
+      },
+      {
+        "category": "cleaning",
+        "expected_id": "clean_drop_duplicates",
+        "retrieved_top3": [
+          "clean_drop_duplicates",
+          "clean_drop_high_nulls",
+          "clean_parse_dates"
+        ],
+        "rank": 1,
+        "hit_at_1": true
+      },
+      {
+        "category": "cleaning",
+        "expected_id": "clean_numeric_nulls",
+        "retrieved_top3": [
+          "clean_numeric_nulls",
+          "clean_drop_high_nulls",
+          "clean_drop_duplicates"
+        ],
+        "rank": 1,
+        "hit_at_1": true
+      },
+      {
+        "category": "engineering",
+        "expected_id": "basic-engineering",
+        "retrieved_top3": [
+          "basic-engineering"
+        ],
+        "rank": 1,
+        "hit_at_1": true
+      },
+      {
+        "category": "analysis",
+        "expected_id": "timeseries-advanced",
+        "retrieved_top3": [
+          "timeseries-advanced",
+          "timeseries-advanced-v2",
+          "timeseries-basic"
+        ],
+        "rank": 1,
+        "hit_at_1": true
+      },
+      {
+        "category": "analysis",
+        "expected_id": "geographic",
+        "retrieved_top3": [
+          "geographic",
+          "text",
+          "multivariate"
+        ],
+        "rank": 1,
+        "hit_at_1": true
+      },
+      {
+        "category": "analysis",
+        "expected_id": "target-aware",
+        "retrieved_top3": [
+          "target-aware",
+          "predictive-modeling",
+          "numeric-dist"
+        ],
+        "rank": 1,
+        "hit_at_1": true
+      }
+    ]
+  },
+  "planner_compliance": {
+    "benchmarks_evaluated": 5,
+    "cleaning_schema_validity_pct": 100.0,
+    "analysis_schema_validity_pct": 100.0,
+    "template_resolution_rate_pct": 100.0,
+    "target_identification_accuracy_pct": 100.0,
+    "total_planned_analyses": 40,
+    "plans": [
+      {
+        "id": "ai_social_media",
+        "cleaning_steps": 0,
+        "analysis_sections": 4,
+        "analysis_items": 8,
+        "target_variables": [
+          "Mental_Health_Score",
+          "Physical_Health_Score"
+        ],
+        "target_match": true
+      },
+      {
+        "id": "walmart_sales",
+        "cleaning_steps": 0,
+        "analysis_sections": 4,
+        "analysis_items": 8,
+        "target_variables": [
+          "Weekly_Sales"
+        ],
+        "target_match": true
+      },
+      {
+        "id": "ironman_suits",
+        "cleaning_steps": 0,
+        "analysis_sections": 3,
+        "analysis_items": 6,
+        "target_variables": [
+          "Estimated Value"
+        ],
+        "target_match": true
+      },
+      {
+        "id": "college_major_roi",
+        "cleaning_steps": 0,
+        "analysis_sections": 4,
+        "analysis_items": 8,
+        "target_variables": [
+          "net_roi_usd",
+          "roi_pct",
+          "earnings_10yr_usd"
+        ],
+        "target_match": true
+      },
+      {
+        "id": "philadelphia_opa_sfh",
+        "cleaning_steps": 0,
+        "analysis_sections": 5,
+        "analysis_items": 10,
+        "target_variables": [
+          "log_price",
+          "observed_price"
+        ],
+        "target_match": true
+      }
+    ]
+  },
+  "execution_and_observer": {
+    "notebooks_evaluated": 5,
+    "total_code_cells": 55,
+    "pre_observer_pass_rate_pct": 98.18,
+    "post_observer_pass_rate_pct": 100.0,
+    "post_observer_failure_rate_pct": 0.0,
+    "total_observer_patches": 5,
+    "runtime_exception_fixes": 1,
+    "visual_layout_fixes": 4,
+    "total_charts_rendered": 30,
+    "total_consultant_insights": 33,
+    "key_takeaways_coverage_pct": 100.0,
+    "notebooks": [
+      {
+        "id": "ai_social_media",
+        "file": "AI_SocialMedia_Student_Dataset.csv",
+        "code_cells": 11,
+        "pre_observer_exceptions": 0,
+        "observer_patches_applied": 0,
+        "patched_cell_indices": [],
+        "post_observer_errors": 0,
+        "charts_rendered": 6,
+        "consultant_insights": 6,
+        "has_key_takeaways": true
+      },
+      {
+        "id": "walmart_sales",
+        "file": "Walmart_Sales.csv",
+        "code_cells": 11,
+        "pre_observer_exceptions": 0,
+        "observer_patches_applied": 0,
+        "patched_cell_indices": [],
+        "post_observer_errors": 0,
+        "charts_rendered": 6,
+        "consultant_insights": 6,
+        "has_key_takeaways": true
+      },
+      {
+        "id": "ironman_suits",
+        "file": "all_ironman_suit.csv",
+        "code_cells": 9,
+        "pre_observer_exceptions": 0,
+        "observer_patches_applied": 1,
+        "patched_cell_indices": [
+          7
+        ],
+        "post_observer_errors": 0,
+        "charts_rendered": 4,
+        "consultant_insights": 4,
+        "has_key_takeaways": true
+      },
+      {
+        "id": "college_major_roi",
+        "file": "college_major_roi.csv",
+        "code_cells": 11,
+        "pre_observer_exceptions": 1,
+        "observer_patches_applied": 2,
+        "patched_cell_indices": [
+          9,
+          10
+        ],
+        "post_observer_errors": 0,
+        "charts_rendered": 6,
+        "consultant_insights": 6,
+        "has_key_takeaways": true
+      },
+      {
+        "id": "philadelphia_opa_sfh",
+        "file": "opa data - philadelphia_sfh_modeling.csv",
+        "code_cells": 13,
+        "pre_observer_exceptions": 0,
+        "observer_patches_applied": 2,
+        "patched_cell_indices": [
+          5,
+          12
+        ],
+        "post_observer_errors": 0,
+        "charts_rendered": 8,
+        "consultant_insights": 11,
+        "has_key_takeaways": true
+      }
+    ]
+  },
+  "production_telemetry": {
+    "total_events": 6,
+    "runs_started": 2,
+    "runs_succeeded": 2,
+    "runs_failed": 0,
+    "run_success_rate_pct": 100.0,
+    "failure_rate_pct": 0.0,
+    "mean_duration_sec": 273.93,
+    "min_duration_sec": 136.84,
+    "max_duration_sec": 411.02,
+    "mean_cost_usd": 0.023234,
+    "min_cost_usd": 0.018585,
+    "max_cost_usd": 0.027882,
+    "mean_tokens_per_run": 35744,
+    "total_downloads": 2,
+    "download_conversion_rate_pct": 100.0
+  }
+}

@@ -78,6 +78,8 @@ def infer_type(series: pd.Series) -> str:
                 # Basic check if it looks like date, prevent random numbers parsing as dates
                 if sample.astype(str).str.match(r'^[\d/\-:\. T]+[a-zA-Z]*$').mean() > 0.8:
                     parsed = pd.to_datetime(sample, errors='coerce')
+                    if parsed.notna().sum() <= 0.8 * len(sample):
+                        parsed = pd.to_datetime(sample, errors='coerce', format='mixed', dayfirst=True)
                     if parsed.notna().sum() > 0.8 * len(sample):
                         return "datetime"
         except:

@@ -33,6 +33,7 @@ def track_usage(stage: str, model: str, input_tokens: int, output_tokens: int, l
         "model": model,
         "input_tokens": input_tokens,
         "output_tokens": output_tokens,
+        "total_tokens": input_tokens + output_tokens,
         "latency_ms": latency_ms,
         "cost": round(cost, 6)
     }

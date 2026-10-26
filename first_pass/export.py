@@ -14,7 +14,7 @@ def export_to_py(notebook_path: str, output_dir: str):
     base_name = os.path.splitext(os.path.basename(notebook_path))[0]
     py_path = os.path.join(output_dir, f"{base_name}.py")
     subprocess.run(
-        ["jupyter", "nbconvert", "--to", "script", notebook_path, "--output-dir", output_dir],
+        ["jupyter", "nbconvert", "--to", "python", notebook_path, "--output-dir", output_dir],
         check=True, capture_output=True, text=True
     )
     return py_path

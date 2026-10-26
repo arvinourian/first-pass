@@ -70,7 +70,11 @@ def generate_profile(df: pd.DataFrame, max_columns: int = 50) -> DataProfile:
                 
         elif inferred == "datetime":
             try:
-                parsed = pd.to_datetime(s, errors='coerce').dropna()
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    parsed = pd.to_datetime(s, errors='coerce').dropna()
+                    if len(parsed) <= 0.8 * len(s):
+                        parsed = pd.to_datetime(s, errors='coerce', format='mixed', dayfirst=True).dropna()
                 if not parsed.empty:
                     col_prof.date_range = {
                         "start": parsed.min().isoformat(),
