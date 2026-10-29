@@ -147,8 +147,8 @@ First Pass includes a reproducible, 5-tier evaluation harness (`first_pass/eval_
 | **Planner Compliance** | **Schema & Template Validity** | **100.0% (40/40 steps)** | Strict Pydantic validation + template precondition checks + 100% target variable recall |
 | **Execution Reliability** | **Pre-Observer Cell Pass Rate** | **98.18% (54/55 cells)** | 1 runtime `TypeError` + 4 visual chart layout defects before Observer intervention |
 | **Multimodal Self-Correction** | **Post-Observer Cell Pass Rate** | **100.00% (55/55 cells)** | **0.00% unhandled failure rate** after 5 autonomous Observer code & vision patches |
-| **API Token Cost** | **Mean Cost per Full Run** | **$0.0232 / run** | Range: **$0.0186 – $0.0279** (~35.7k tokens across 5 passes on `gemini-3.8-flash`) |
-| **End-to-End Latency** | **Full Pipeline Duration** | **273.9s mean (136.8s – 411.0s)** | Includes 5 LLM passes, headless Jupyter execution, vision inspection & synthesis |
+| **API Token Cost** | **Mean Cost per Full Run** | **$0.0232 / run** | Range: **$0.0186 to $0.0279** (~35.7k tokens across 5 passes on `gemini-3.8-flash`) |
+| **End-to-End Latency** | **Full Pipeline Duration** | **273.9s mean (136.8s to 411.0s)** | Includes 5 LLM passes, headless Jupyter execution, vision inspection & synthesis |
 | **Production Telemetry** | **Run Success & Export Rate** | **100.0% Success / 100.0% Export** | Tracked via `telemetry.jsonl` (`RUN_START`, `RUN_SUCCESS`, `RUN_ERROR`, `DOWNLOAD`) |
 
 ### 2. Per-Dataset Benchmark Breakdown (121,850 Total Rows)
@@ -166,19 +166,19 @@ First Pass includes a reproducible, 5-tier evaluation harness (`first_pass/eval_
 
 Pass 4 (`first_pass/llm/observer.py`) inspects both standard error streams (`ename`, `evalue`, tracebacks) and base64-encoded PNG chart renders from executed notebook cells. Across the 5-dataset validation suite, the Observer autonomously identified and patched **5 defects across 3 notebooks**:
 
-1. **Runtime Exception Patch (`college_major_roi.csv` — Cell 10):**
+1. **Runtime Exception Patch (`college_major_roi.csv`, Cell 10):**
    * **Failure Mode:** Initial custom code passed `pd.cut(df['gpa'], bins=8)` (`pandas.Interval` objects) directly to `sns.lineplot`, raising `TypeError: Invalid object type at position 0` during Matplotlib axis rendering.
-   * **Autonomous Patch:** The Observer caught the traceback, pre-formatted explicit interval string labels (`f"{c.left:.2f}–{c.right:.2f}"`), aggregated mean ROI by bin and `major_category`, and re-executed the cell in-place with zero errors.
-2. **Visual Layout Patch — Legend Occlusion (`college_major_roi.csv` — Cell 9):**
+   * **Autonomous Patch:** The Observer caught the traceback, pre-formatted explicit interval string labels (`f"{c.left:.2f}-{c.right:.2f}"`), aggregated mean ROI by bin and `major_category`, and re-executed the cell in-place with zero errors.
+2. **Visual Layout Patch: Legend Occlusion (`college_major_roi.csv`, Cell 9):**
    * **Failure Mode:** Grouped bar chart legend overlapped the tallest `Completed Internship` bar.
    * **Autonomous Patch:** Expanded y-axis headroom (`ax.set_ylim(0, 850000)`) and anchored `loc='upper left'`.
-3. **Visual Layout Patch — Dual-Axis Gridline Collision (`all_ironman_suit.csv` — Cell 7):**
+3. **Visual Layout Patch: Dual-Axis Gridline Collision (`all_ironman_suit.csv`, Cell 7):**
    * **Failure Mode:** Secondary twin axis (`ax2 = ax1.twinx()`) rendered competing horizontal gridlines over the primary bar chart.
    * **Autonomous Patch:** Injected `ax2.grid(False)` to preserve visual clarity.
-4. **Visual Layout Patch — Missing Twin-Axis Legend Handles (`philadelphia_sfh_modeling.csv` — Cell 5):**
+4. **Visual Layout Patch: Missing Twin-Axis Legend Handles (`philadelphia_sfh_modeling.csv`, Cell 5):**
    * **Failure Mode:** Dual-axis price trajectory and transaction volume plot omitted combined legend entries.
    * **Autonomous Patch:** Extracted and merged `get_legend_handles_labels()` across `ax1` and `ax2`.
-5. **Visual Layout Patch — Overwritten Seaborn Hue Legend (`philadelphia_sfh_modeling.csv` — Cell 12):**
+5. **Visual Layout Patch: Overwritten Seaborn Hue Legend (`philadelphia_sfh_modeling.csv`, Cell 12):**
    * **Failure Mode:** Calling `ax1.legend()` after `sns.kdeplot(..., hue='split')` overwrote Seaborn's `split` cohort legend handles with only the `Parity (1.0)` vertical reference line.
    * **Autonomous Patch:** Extracted existing `legend_handles` from the Seaborn legend object and appended a custom `plt.Line2D` handle for the parity threshold.
 

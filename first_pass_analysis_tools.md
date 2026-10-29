@@ -1,11 +1,11 @@
-# First Pass — Analysis Tool Catalog
+# First Pass: Analysis Tool Catalog
 
 This file defines every analysis/visualization tool the First Pass RAG planner
 (Pass 2) may select. Use it to build two things:
 
-1. **Analysis templates** in `templates/analysis/` — one module per `template_id`,
+1. **Analysis templates** in `templates/analysis/`: one module per `template_id`,
    each with a Pydantic params schema and a function that returns notebook cells.
-2. **Analysis playbooks** in `playbooks/analysis/` — Markdown files with YAML
+2. **Analysis playbooks** in `playbooks/analysis/`: Markdown files with YAML
    frontmatter that the retriever searches. Each playbook recommends one or more
    `template_id`s and describes when they apply.
 
@@ -23,13 +23,13 @@ This file defines every analysis/visualization tool the First Pass RAG planner
   item is rejected before execution.
 - If a template fails at execution time, catch the error, emit a markdown cell
   "This analysis failed: <error>", and continue.
-- Statistical tests output numbers only (statistic, p-value, effect size) —
+- Statistical tests output numbers only (statistic, p-value, effect size),
   no written conclusions.
 
 ## Tiers
 
-- **v1** — implement first; covers most spreadsheets.
-- **v2** — implement after the end-to-end pipeline works.
+- **v1**: implement first; covers most spreadsheets.
+- **v2**: implement after the end-to-end pipeline works.
 
 ## Column type vocabulary (from the profiler)
 
@@ -45,11 +45,11 @@ Always considered first. These orient the user before any analysis.
 | template_id | Tool | Applies when | Key params | Tier |
 |---|---|---|---|---|
 | `summary_stats` | Summary statistics table | Always | `columns` (default: all) | v1 |
-| `column_overview` | Column type overview (type, null %, unique count) | Always | — | v1 |
+| `column_overview` | Column type overview (type, null %, unique count) | Always | None | v1 |
 | `missing_bar` | Missing-value bar chart | Any column has nulls | `min_null_pct` | v1 |
 | `missing_matrix` | Missingness matrix/heatmap | Nulls in 3+ columns | `max_rows_sampled` | v1 |
 | `duplicate_summary` | Duplicate row summary | Duplicates detected | `subset_columns` | v1 |
-| `cardinality_bar` | Unique-count bar chart per categorical | 3+ categorical columns | — | v1 |
+| `cardinality_bar` | Unique-count bar chart per categorical | 3+ categorical columns | None | v1 |
 | `outlier_flags` | Outlier flag table (IQR or z-score) | Numeric columns with long tails | `method` (`iqr`/`zscore`), `threshold` | v1 |
 
 ## 2. Single numeric column
@@ -192,7 +192,7 @@ Retrieved when the user's text or column names signal the domain.
    first look.
 5. List candidates that were considered but cut by the cap in a
    `further_analyses` field of the plan. The notebook renders these as a
-   "Further analyses to consider" section — this is how First Pass points the
+   "Further analyses to consider" section, which is how First Pass points the
    user in the right direction.
 6. Never select a template whose "Applies when" preconditions are not met.
    Only select v1 templates unless v2 templates are enabled in config.

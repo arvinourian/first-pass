@@ -1,6 +1,6 @@
 """
-First Pass — Automated Evaluation & Observability Harness
-=========================================================
+First Pass: Automated Evaluation & Observability Harness
+========================================================
 Evaluates the 5 core dimensions of the First Pass Agentic RAG pipeline:
 1. Deterministic Ingestion & Statistical Profiling (Latency & Type Inference Accuracy)
 2. Hybrid BM25 + FAISS Playbook RAG Retrieval (Hit@1, Recall@3, MRR)

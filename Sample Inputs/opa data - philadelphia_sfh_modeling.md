@@ -22,7 +22,7 @@ Sales come from the cached Philadelphia deed data; property characteristics and 
 
 The shared pipeline restricts records to supported single-family homes, excluding condos and unresolved property/measurement conflicts. It retains the latest transaction within each window before applying single-property, minimum-price, party/distress and measurement checks. It also applies training-derived 2nd/99.9th percentile price limits ($40,000–$2,475,000) to both cohorts. It is therefore a screened sample, not all transactions or a representative sample of every home. The cached records may be incomplete. These test periods have been inspected during prior research.
 
-No new values were imputed in this export. Raw OPA area fields remain beside selected model area fields. Recorded numeric zeros remain zero. Categorical MISSING is an explicit category; blank CSV fields are missing values. Some source categories are numeric-looking codes—treat them as nominal. Read parcel identifiers as strings, preserving leading zeros. Square footage is square feet; prices are dollars. Do not assume OPA year built is historically accurate.
+No new values were imputed in this export. Raw OPA area fields remain beside selected model area fields. Recorded numeric zeros remain zero. Categorical MISSING is an explicit category; blank CSV fields are missing values. Some source categories are numeric-looking codes; treat them as nominal. Read parcel identifiers as strings, preserving leading zeros. Square footage is square feet; prices are dollars. Do not assume OPA year built is historically accurate.
 
 Published TY2027 assessments are retained for comparison; they are not observed ground truth. The CSV does not estimate taxes or contain the unsold-parcel prediction population.
 
